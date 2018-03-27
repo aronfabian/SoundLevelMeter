@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">WavRecorder</string>
+    <string name="notification_title">WavRecorder</string>
+    <string name="notification_message">Recording</string>
+    <string name="ticker_text">WavRecorder</string>
+</resources>
