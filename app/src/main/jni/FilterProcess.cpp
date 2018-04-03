@@ -67,10 +67,25 @@ Java_wavrecorder_com_fabian_aron_wavrecorder_RecorderService_addParametricFilter
                                                              fp->samplerate);
     paramFilter->setParametricParameters(frequency, octaveWidth, dbGain);
     paramFilter->enable(true);
+//
+//    SuperpoweredFilter *lpf = new SuperpoweredFilter(SuperpoweredFilter_Resonant_Lowpass,fp->samplerate);
+//    lpf->setResonantParameters(8000,0);
+//    lpf->enable(true);
+//    SuperpoweredFilter *hpf = new SuperpoweredFilter(SuperpoweredFilter_Resonant_Highpass,fp->samplerate);
+//    hpf->setResonantParameters(200,0);
+//    hpf->enable(true);
+//
+//     fp->filterList[fp->filterNum] = lpf;
+
     fp->filterList[fp->filterNum] = paramFilter;
     if (fp->filterNum < fp->MAX_FILTER_NUM) {
         fp->filterNum++;
     }
+//    fp->filterList[fp->filterNum] = hpf;
+//    if (fp->filterNum < fp->MAX_FILTER_NUM) {
+//        fp->filterNum++;
+//    }
+
     return fp->filterNum;
 }
 
