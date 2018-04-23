@@ -13,4 +13,7 @@
     <string name="calc_time_sum">Válassza ki az átlagolási időt az SPL számításánál</string>
     <string name="calib_title">Kalibrációs mód</string>
     <string name="calib_sum">Kalibrációs fájl mentése</string>
+    <string name="rec_started">A mérés már korábban elindult!</string>
+    <string name="rec_stopped">A mérés nincs elindítva!</string>
+    <string name="phonestate_denied">Engedély megtagadva: telefon állapotának kiolvasása</string>
 </resources>
