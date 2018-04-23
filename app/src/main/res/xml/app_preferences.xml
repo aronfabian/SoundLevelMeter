@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <ListPreference
+        android:entries="@array/list_class"
+        android:entryValues="@array/list_classvalues"
+        android:defaultValue="1"
+        android:key="class_type"
+        android:summary="@string/meas_acc_title"
+        android:title="@string/meas_acc_sum" />
+
+    <ListPreference
+        android:entries="@array/list_rms"
+        android:entryValues="@array/list_rmsvalues"
+        android:defaultValue="sec"
+        android:key="rms_time"
+        android:summary="@string/calc_time_sum"
+        android:title="@string/calc_time_title" />
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:defaultValue="false"
+        android:key="calibration"
+        android:summary="@string/calib_sum"
+        android:title="@string/calib_title" />
+
+
+</android.support.v7.preference.PreferenceScreen>

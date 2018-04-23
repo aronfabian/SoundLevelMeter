@@ -13,16 +13,19 @@
 class FilterProcess {
 public:
     static const int MAX_FILTER_NUM = 15;
-    SuperpoweredFilter *filterList[MAX_FILTER_NUM];
+    SuperpoweredFilter *aFilterList[MAX_FILTER_NUM], *cFilterList[MAX_FILTER_NUM];
     unsigned int samplerate;
-    int filterNum;
+    int aFilterNum, cFilterNum;
+    FilterProcess *fp;
 
 
     FilterProcess(unsigned int samplerate);
 
     ~FilterProcess();
 
-    void filterProcess(float *input, float *output, unsigned int numberOfSamples);
+    void filterProcessA(float *input, float *output, unsigned int numberOfSamples);
+
+    void filterProcessC(float *input, float *output, unsigned int numberOfSamples);
 
 
 };

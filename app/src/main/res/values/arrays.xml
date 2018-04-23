@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="list_class">
+        <item>Class 1</item>
+        <item>Class 2</item>
+    </string-array>
+    <string-array name="list_classvalues">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="list_rms">
+        <item>1 sec</item>
+        <item>100 msec</item>
+    </string-array>
+    <string-array name="list_rmsvalues">
+        <item>sec</item>
+        <item>milli</item>
+    </string-array>
+</resources>

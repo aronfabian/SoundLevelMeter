@@ -5,11 +5,11 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Icon;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
@@ -24,10 +24,6 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.Arrays;
 
 
@@ -39,20 +35,39 @@ public class RecorderService extends Service {
 
     private static final String LOG_TAG = "RecorderService";
     private static final int SAMPLERATE = 44100;
-    private static int CHANNELCONFIG = AudioFormat.CHANNEL_IN_MONO;
-    private static int AUDIOFORMAT = AudioFormat.ENCODING_PCM_16BIT;
+    private static final int CHANNELCONFIG = AudioFormat.CHANNEL_IN_MONO;
+    private static final int AUDIOFORMAT = AudioFormat.ENCODING_PCM_16BIT;
     private static int AUDIOSOURCE;
-    private int BUFFERSIZE = AudioRecord.getMinBufferSize(SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT);
+    public static String classType = Constants.MEASUREMENT_CLASS.CLASS_ONE;
+    private final int BUFFERSIZE = AudioRecord.getMinBufferSize(SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT);
     private short[] buffer = new short[BUFFERSIZE];
+    private short[] bufferC = new short[BUFFERSIZE];
     private boolean isRunning = false;
     private AudioRecord recorder;
     private DataOutputStream wavOut = null;
+    private FileOutputStream os;
     private File wavFile = null;
+    public static boolean saveFile = false;
     private final Object lock = new Object();
-
+    public static boolean isAlive = false;
+    private final Intent instIntent = new Intent(Constants.ACTION.DBA_BROADCAST_ACTION);
+    private final Intent meanIntent = new Intent(Constants.ACTION.LAEQ_BROADCAST_ACTION);
+    private int secCount = 0;
+    private long sampleCount = 0;
+    private static int rmsUpdateTime = SAMPLERATE;
+    public static int filterNumA = 0;
+    public static int filterNumC = 0;
+    private double dBA;
+    private double dBC = 0;
+    private double lAeq = 0;
+    private long sumSquaresA = 0;
+    private long sumSquaresC;
+    private long rmsSquareA = 0;
+    public long rmsSquareC;
+    private long sumRmsSquareA = 0;
+    private int measLength = 0;
 
     static {
-        System.loadLibrary("FilterProcess");
         if (MediaRecorder.getAudioSourceMax() >= 9) {
             AUDIOSOURCE = MediaRecorder.AudioSource.UNPROCESSED;
         } else if (MediaRecorder.getAudioSourceMax() >= 6) {
@@ -64,6 +79,7 @@ public class RecorderService extends Service {
 
     public RecorderService() {
         super();
+        isAlive = true;
     }
 
     @Nullable
@@ -72,11 +88,13 @@ public class RecorderService extends Service {
         return null;
     }
 
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
         if (intent != null) {
             if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
+                RecorderService.isAlive = true;
                 Notification notification;
                 Intent notifStopIntent = new Intent(this, RecorderService.class);
                 notifStopIntent.setAction(Constants.ACTION.NOTIFSTOPFOREGROUND_ACTION);
@@ -86,7 +104,7 @@ public class RecorderService extends Service {
                                 .setSmallIcon(R.mipmap.ic_launcher_foreground)
                                 .setContentTitle("Recording...!")
                                 .setOngoing(true)
-                                .addAction(R.drawable.stop_icon,"Stop",pStopIntent);
+                                .addAction(R.drawable.stop_icon, "Stop", pStopIntent);
                 notification = nBuilder.build();
                 NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 mNotificationManager.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
@@ -104,6 +122,7 @@ public class RecorderService extends Service {
                         try {
                             if (recorder.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
                                 recorder.stop();
+                                FilterPlugin.filterProcessDelete();
                             }
                         } catch (IllegalStateException ex) {
                             ex.printStackTrace();
@@ -115,7 +134,8 @@ public class RecorderService extends Service {
                     if (wavOut != null) {
                         try {
                             wavOut.close();
-                            updateWavHeader(wavFile);
+                            WavHelper.updateWavHeader(wavFile);
+                            Log.i(LOG_TAG, "Update Wav Header");
                         } catch (IOException ex) {
                             ex.printStackTrace();
                         }
@@ -127,6 +147,13 @@ public class RecorderService extends Service {
                     Log.i(LOG_TAG, "Received Stop Foreground Intent");
                     stopForeground(true);
                     mNotificationManager.cancel(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE);
+                    JobScheduler jobScheduler =
+                            (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+                    jobScheduler.schedule(new JobInfo.Builder(4,
+                            new ComponentName(this, UploadJobService.class))
+                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_NOT_ROAMING)
+                            .setRequiresCharging(false)
+                            .build());
                     stopSelf();
                 }
             }
@@ -138,33 +165,45 @@ public class RecorderService extends Service {
     public void onDestroy() {
         super.onDestroy();
         Toast.makeText(this, "Stop Recording", Toast.LENGTH_LONG).show();
+        isAlive = false;
     }
 
     /**
      * Creates an AudioRecorder instace and starts a thread to read and write audiodata.
      */
     private void startRecording() {
-
-        FilterProcess(SAMPLERATE);
-        addParametricFilter(1000, 0.5f, -20);
+        FilterPlugin.filterProcessCreate(SAMPLERATE);
+        FilterPlugin.setFilters(this, classType);
 
         recorder = new AudioRecord(AUDIOSOURCE, SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT, 2 * BUFFERSIZE);
-        File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
-        dir.mkdirs();
-        wavFile = new File(dir, "RecordedAudio.wav");
-        FileOutputStream os = null;
-
+        if (saveFile) {
+            File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
+            dir.mkdirs();
+            java.util.Calendar calendar = java.util.Calendar.getInstance();
+            String year = String.valueOf(calendar.get(java.util.Calendar.YEAR));
+            String month = String.valueOf(calendar.get(java.util.Calendar.MONTH) + 1);
+            String day = String.valueOf(calendar.get(java.util.Calendar.DAY_OF_MONTH));
+            String hour = String.valueOf(calendar.get(java.util.Calendar.HOUR_OF_DAY));
+            String minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
+            String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
+            wavFile = new File(dir, Constants.deviceUniqueID + "_" + year + "_" + month + "_" + day + "_" + hour + "_" + minute + "_" + second + ".wav");
+            os = null;
+        }
         try {
-            os = new FileOutputStream(wavFile);
-            wavOut = new DataOutputStream(os);
-            writeWavHeader(wavOut, CHANNELCONFIG, SAMPLERATE, AUDIOFORMAT);
+            if (saveFile) {
+                os = new FileOutputStream(wavFile);
+                wavOut = new DataOutputStream(os);
+                WavHelper.writeWavHeader(wavOut, CHANNELCONFIG, SAMPLERATE, AUDIOFORMAT);
+            }
             recorder.startRecording();
             isRunning = true;
-            Thread fileWriterThread = new Thread(new Runnable() {
+            Thread processingThread = new Thread(new Runnable() {
+
                 int read;
                 long total = 0;
-                byte[] b = new byte[2];
+                final byte[] b = new byte[2];
                 float[] floats = new float[buffer.length];
+                float[] floatsC = new float[buffer.length];
 
                 @Override
                 public void run() {
@@ -174,42 +213,115 @@ public class RecorderService extends Service {
                             read = recorder.read(buffer, 0, buffer.length);
                             //Log.d(LOG_TAG, "Original " + Arrays.toString(buffer));
                             floats = shortToFloat(buffer);
-                            filterProcessing(floats, floats, read);
+                            if (filterNumC != 0) {
+                                FilterPlugin.filterProcessingC(floats, floatsC, read);
+                            }
+                            if (filterNumA != 0) {
+                                FilterPlugin.filterProcessingA(floats, floats, read);
+                            }
                             buffer = floatToShort(floats);
+                            bufferC = floatToShort(floatsC);
                             //Log.d(LOG_TAG, "Filtered " + Arrays.toString(buffer));
-                            // WAVs cannot be > 4 GB due to the use of 32 bit unsigned integers.
-                            if (total + read > 4294967295L) {
-                                // Write as many bytes as we can before hitting the max size
-                                for (int i = 0; i < read && total <= 4294967295L; i++, total++) {
+
+                            calcRMS(read);
+
+                            if (saveFile) {
+                                // WAVs cannot be > 4 GB due to the use of 32 bit unsigned integers.
+                                if (total + read > 4294967295L) {
+                                    // Write as many bytes as we can before hitting the max size
+                                    for (int i = 0; i < read && total <= 4294967295L; i++, total++) {
+                                        try {
+                                            b[0] = (byte) (buffer[i] & 0x00FF);
+                                            b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
+                                            wavOut.write(b, 0, 2);
+
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                } else {
+                                    // Write out the entire read buffer
                                     try {
-                                        b[0] = (byte) (buffer[i] & 0x00FF);
-                                        b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
-                                        wavOut.write(b, 0, 2);
+                                        for (int i = 0; i < read; i++) {
+                                            b[0] = (byte) (buffer[i] & 0x00FF);
+                                            b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
+                                            wavOut.write(b, 0, 2);
+                                        }
 
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
+                                    total += read;
                                 }
-                            } else {
-                                // Write out the entire read buffer
-                                try {
-                                    for (int i = 0; i < read; i++) {
-                                        b[0] = (byte) (buffer[i] & 0x00FF);
-                                        b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
-                                        wavOut.write(b, 0, 2);
-                                    }
-
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                                total += read;
                             }
                         }
                     }
                 }
+
+                private void calcRMS(int length) {
+
+//                  UNPROCESSED:
+//                      Audio input sensitivity MUST be set such that a 1000 Hz sinusoidal tone source
+//                      played at 94 dB Sound Pressure Level (SPL) yields a response with RMS of 520
+//                      for 16 bit-samples (or -36 dB Full Scale for floating point/double precision samples
+
+//                  VOICE_RECOGNITION AND MIC:
+//                      Audio input sensitivity SHOULD be set such that a 90 dB sound power level
+//                      (SPL) source at 1000 Hz yields RMS of 2500 for 16-bit samples.
+                    double offset;
+                    if (AUDIOSOURCE == MediaRecorder.AudioSource.UNPROCESSED) {
+                        offset = 129.98;
+                    } else {
+                        offset = 112.35;
+                    }
+                    long dBBase = 32768 * 32768;
+
+                    int i = 0;
+                    for (short value : Arrays.copyOfRange(buffer, 0, length - 1)) {
+                        sumSquaresA += (long) value * (long) value;
+                        sumSquaresC += (long) bufferC[i] * (long) bufferC[i];
+                        i++;
+                        sampleCount++;
+                        if (sampleCount >= rmsUpdateTime) {
+                            if (sumSquaresA == 0) {
+                                dBA = 0;
+                            } else {
+                                rmsSquareA = sumSquaresA / sampleCount;
+                                sumRmsSquareA += rmsSquareA;
+                                dBA = (10 * Math.log10((double) rmsSquareA / dBBase)) + offset;
+                            }
+                            if (sumSquaresC == 0) {
+                            } else {
+                                double temp = (10 * Math.log10((double) rmsSquareC / dBBase)) + offset;
+                                rmsSquareC = sumSquaresC / sampleCount;
+                                if (temp > dBC) {
+                                    dBC = temp;
+                                    instIntent.putExtra("dBC_max", dBC);
+                                }
+                            }
+                            sampleCount = 0;
+                            sumSquaresA = 0;
+                            sumSquaresC = 0;
+                            instIntent.removeExtra("dBA");
+                            instIntent.putExtra("dBA", dBA);
+                            sendBroadcast(instIntent);
+                        }
+                        secCount++;
+                        if (secCount == SAMPLERATE) {
+                            measLength++;
+                            secCount = 0;
+                            lAeq = (10 * Math.log10((double) sumRmsSquareA / measLength / dBBase)) + offset;
+                            meanIntent.putExtra("LAeq", lAeq);
+                            sendBroadcast(meanIntent);
+                        }
+
+                    }
+
+
+                }
             });
-            if (!fileWriterThread.isAlive()) {
-                fileWriterThread.start();
+            if (!processingThread.isAlive()) {
+                processingThread.start();
             }
             Toast.makeText(this, "Start Recording", Toast.LENGTH_LONG).show();
 
@@ -222,10 +334,11 @@ public class RecorderService extends Service {
 
     /**
      * Converts short array to float array.
+     *
      * @param pcms input array
      * @return output array
      */
-    public static float[] shortToFloat(short[] pcms) {
+    private static float[] shortToFloat(short[] pcms) {
         float[] floaters = new float[pcms.length];
         for (int i = 0; i < pcms.length; i++) {
             floaters[i] = pcms[i];
@@ -235,10 +348,11 @@ public class RecorderService extends Service {
 
     /**
      * Converts float array to short array.
+     *
      * @param floats input array
      * @return output array
      */
-    public static short[] floatToShort(float[] floats) {
+    private static short[] floatToShort(float[] floats) {
         short[] shorts = new short[floats.length];
         for (int i = 0; i < floats.length; i++) {
             shorts[i] = (short) Math.round(floats[i]);
@@ -253,156 +367,17 @@ public class RecorderService extends Service {
     }
 
     /**
-     * Sets channels and bitdepth parameters and calls another writeWavHeader() function.
+     * Sets RMS calculation window width
      *
-     * @param out
-     * @param channelMask
-     * @param sampleRate
-     * @param encoding
-     * @throws IOException
+     * @param s "sec" = 1s or "milli" = 100ms
      */
-    private void writeWavHeader(OutputStream out, int channelMask, int sampleRate, int encoding) throws IOException {
-        short channels;
-        switch (channelMask) {
-            case AudioFormat.CHANNEL_IN_MONO:
-                channels = 1;
-                break;
-            case AudioFormat.CHANNEL_IN_STEREO:
-                channels = 2;
-                break;
-            default:
-                throw new IllegalArgumentException("Unacceptable channel mask");
-        }
-
-        short bitDepth;
-        switch (encoding) {
-            case AudioFormat.ENCODING_PCM_8BIT:
-                bitDepth = 8;
-                break;
-            case AudioFormat.ENCODING_PCM_16BIT:
-                bitDepth = 16;
-                break;
-            case AudioFormat.ENCODING_PCM_FLOAT:
-                bitDepth = 32;
-                break;
-            default:
-                throw new IllegalArgumentException("Unacceptable encoding");
-        }
-
-        writeWavHeader(out, channels, sampleRate, bitDepth);
-    }
-
-    /**
-     * Writes the proper 44-byte RIFF/WAVE header to/for the given stream
-     * Two size fields are left empty/null since we do not yet know the final stream size
-     *
-     * @param out        The stream to write the header to
-     * @param channels   The number of channels
-     * @param sampleRate The sample rate in hertz
-     * @param bitDepth   The bit depth
-     * @throws IOException
-     */
-    private void writeWavHeader(OutputStream out, short channels, int sampleRate, short bitDepth) throws IOException {
-        // Convert the multi-byte integers to raw bytes in little endian format as required by the spec
-        byte[] littleBytes = ByteBuffer
-                .allocate(14)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                .putShort(channels)
-                .putInt(sampleRate)
-                .putInt(sampleRate * channels * (bitDepth / 8))
-                .putShort((short) (channels * (bitDepth / 8)))
-                .putShort(bitDepth)
-                .array();
-
-        // Not necessarily the best, but it's very easy to visualize this way
-        out.write(new byte[]{
-                // RIFF header
-                'R', 'I', 'F', 'F', // ChunkID
-                0, 0, 0, 0, // ChunkSize (must be updated later)
-                'W', 'A', 'V', 'E', // Format
-                // fmt subchunk
-                'f', 'm', 't', ' ', // Subchunk1ID
-                16, 0, 0, 0, // Subchunk1Size
-                1, 0, // AudioFormat
-                littleBytes[0], littleBytes[1], // NumChannels
-                littleBytes[2], littleBytes[3], littleBytes[4], littleBytes[5], // SampleRate
-                littleBytes[6], littleBytes[7], littleBytes[8], littleBytes[9], // ByteRate
-                littleBytes[10], littleBytes[11], // BlockAlign
-                littleBytes[12], littleBytes[13], // BitsPerSample
-                // data subchunk
-                'd', 'a', 't', 'a', // Subchunk2ID
-                0, 0, 0, 0, // Subchunk2Size (must be updated later)
-        });
-    }
-
-    /**
-     * Updates the given wav file's header to include the final chunk sizes
-     *
-     * @param wav The wav file to update
-     * @throws IOException
-     */
-    private void updateWavHeader(File wav) throws IOException {
-        byte[] sizes = ByteBuffer
-                .allocate(8)
-                .order(ByteOrder.LITTLE_ENDIAN)
-                // There are probably a bunch of different/better ways to calculate
-                // these two given your circumstances. Cast should be safe since if the WAV is
-                // > 4 GB we've already made a terrible mistake.
-                .putInt((int) (wav.length() - 8)) // ChunkSize
-                .putInt((int) (wav.length() - 44)) // Subchunk2Size
-                .array();
-
-        RandomAccessFile accessWave = null;
-        //noinspection CaughtExceptionImmediatelyRethrown
-        try {
-            accessWave = new RandomAccessFile(wav, "rw");
-            // ChunkSize
-            accessWave.seek(4);
-            accessWave.write(sizes, 0, 4);
-
-            // Subchunk2Size
-            accessWave.seek(40);
-            accessWave.write(sizes, 4, 4);
-        } catch (IOException ex) {
-            // Rethrow but we still close accessWave in our finally
-            throw ex;
-        } finally {
-            if (accessWave != null) {
-                try {
-                    accessWave.close();
-                } catch (IOException ex) {
-                    //
-                }
-            }
+    public static void setRmsUpdateTime(String s) {
+        if (s.equals("sec")) {
+            rmsUpdateTime = SAMPLERATE;
+        } else if (s.equals("milli")) {
+            rmsUpdateTime = SAMPLERATE / 10;
         }
     }
-
-
-    /**
-     * Creates C++ object in order to do some signal processing using SuperpoweredSDK
-     *
-     * @param samplerate
-     */
-    private native void FilterProcess(int samplerate);
-
-    /**
-     * Creates a parametric filter and add to the series.
-     *
-     * @param frequency   frequency in Hertz
-     * @param octaveWidth bandwidth in octave
-     * @param dbGain      gain in dB
-     * @return number of filters in the series
-     */
-    private native int addParametricFilter(float frequency, float octaveWidth, float dbGain);
-
-    /**
-     * Process the input data with the predefined filters
-     *
-     * @param input           input buffer
-     * @param output          output buffer (can be the same as input)
-     * @param numberOfSamples number of samples
-     */
-    private native void filterProcessing(float[] input, float[] output, int numberOfSamples);
 
 
 }

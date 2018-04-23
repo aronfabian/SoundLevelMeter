@@ -3,4 +3,15 @@
     <string name="notification_title">WavRecorder</string>
     <string name="notification_message">Recording</string>
     <string name="ticker_text">WavRecorder</string>
+    <string name="perm_phone_state_read">In order to check if a compensate filter is available to your phone we have to get some information from your phone.</string>
+    <string name="more_device_info">In order to get more accurate measurement configuration please make an internet connection.</string>
+    <string name="update_info">"Updates will be enabled in the next measurement."</string>
+    <string name="meas_acc_title">Measurement Accurate</string>
+    <string name="meas_acc_sum">Select the desired accurate</string>
+    <string name="calc_time_title">Calculation Time</string>
+    <string name="calc_time_sum">Select the desired calculation time</string>
+    <string name="calib_title">Calibration Mode</string>
+    <string name="calib_sum">Save calibration wav file</string>
+
+
 </resources>
