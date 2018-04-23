@@ -12,6 +12,9 @@
     <string name="calc_time_sum">Select the desired calculation time</string>
     <string name="calib_title">Calibration Mode</string>
     <string name="calib_sum">Save calibration wav file</string>
+    <string name="rec_started">Recording has already started!</string>
+    <string name="rec_stopped">Recording didn\'t started!</string>
+    <string name="phonestate_denied">Permission denied: Read Phone State</string>
 
 
 </resources>

@@ -34,7 +34,6 @@ import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
 import permissions.dispatcher.RuntimePermissions;
-import pl.pawelkleczkowski.customgauge.CustomGauge;
 
 @RuntimePermissions
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -42,7 +41,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Gauge gauge;
     PhoneDB db;
     MainActivity target = this;
-    private CustomGauge customGauge;
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
     @Override
@@ -56,12 +54,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         gauge = (Gauge) findViewById((R.id.gauge));
         gauge.setMaxValue(190);
         gauge.setMinValue(0);
-        gauge.setUpperText("RMS");
+        gauge.setUpperText("dBA");
         gauge.setLowerText("LAeq: ");
         gauge.setValuePerNick(5);
         gauge.setMajorNickInterval(4);
         gauge.setTotalNicks(60);
-        customGauge = (CustomGauge) findViewById(R.id.gauge1);
 
 
         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(this);
@@ -81,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @OnPermissionDenied(Manifest.permission.READ_PHONE_STATE)
     void onDeniedForReadPhoneState() {
-        Toast.makeText(this, "Permission denied: Read Phone State", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, R.string.phonestate_denied, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -232,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startService(startIntent);
 
                 } else {
-                    Toast.makeText(this, "Recording has already started!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.rec_started, Toast.LENGTH_LONG).show();
                 }
                 break;
             case R.id.btn_stop:
@@ -241,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     stopIntent.setAction(Constants.ACTION.STOPFOREGROUND_ACTION);
                     startService(stopIntent);
                 } else {
-                    Toast.makeText(this, "Recording didn't started!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.rec_stopped, Toast.LENGTH_LONG).show();
                 }
                 break;
 
