@@ -164,7 +164,7 @@ public class RecorderService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Toast.makeText(this, "Stop Recording", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.stop_meas, Toast.LENGTH_LONG).show();
         isAlive = false;
     }
 
@@ -215,6 +215,8 @@ public class RecorderService extends Service {
                             floats = shortToFloat(buffer);
                             if (filterNumC != 0) {
                                 FilterPlugin.filterProcessingC(floats, floatsC, read);
+                            } else {
+                                floatsC = floats;
                             }
                             if (filterNumA != 0) {
                                 FilterPlugin.filterProcessingA(floats, floats, read);
@@ -323,7 +325,7 @@ public class RecorderService extends Service {
             if (!processingThread.isAlive()) {
                 processingThread.start();
             }
-            Toast.makeText(this, "Start Recording", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.start_meas, Toast.LENGTH_LONG).show();
 
         } catch (IOException ex) {
             ex.printStackTrace();

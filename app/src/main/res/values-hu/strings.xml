@@ -16,4 +16,7 @@
     <string name="rec_started">A mérés már korábban elindult!</string>
     <string name="rec_stopped">A mérés nincs elindítva!</string>
     <string name="phonestate_denied">Engedély megtagadva: telefon állapotának kiolvasása</string>
+    <string name="start_meas">A mérés elindult!</string>
+    <string name="stop_meas">A mérés leállt!</string>
+    <string name="settings_info">Állítsd le a mérést a beállítások módosításához!</string>
 </resources>

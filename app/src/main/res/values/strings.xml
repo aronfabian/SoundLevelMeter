@@ -15,6 +15,9 @@
     <string name="rec_started">Recording has already started!</string>
     <string name="rec_stopped">Recording didn\'t started!</string>
     <string name="phonestate_denied">Permission denied: Read Phone State</string>
+    <string name="start_meas">Measurement started!</string>
+    <string name="stop_meas">Measurement stopped!</string>
+    <string name="settings_info">Stop measurement before go to settings!</string>
 
 
 </resources>
