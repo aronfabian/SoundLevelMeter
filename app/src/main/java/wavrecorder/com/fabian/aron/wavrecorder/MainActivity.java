@@ -1,6 +1,7 @@
 package wavrecorder.com.fabian.aron.wavrecorder;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,12 +24,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Objects;
 
-import de.nitri.gauge.Gauge;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnPermissionDenied;
 import permissions.dispatcher.OnShowRationale;
@@ -38,9 +39,12 @@ import permissions.dispatcher.RuntimePermissions;
 @RuntimePermissions
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private Gauge gauge;
     PhoneDB db;
     MainActivity target = this;
+    private ProgressBar progressBar;
+    private TextView dBAText;
+    private TextView dBCText;
+    private TextView lAeqText;
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
     @Override
@@ -51,14 +55,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button stopButton = (Button) findViewById(R.id.btn_stop);
         startButton.setOnClickListener(this);
         stopButton.setOnClickListener(this);
-        gauge = (Gauge) findViewById((R.id.gauge));
-        gauge.setMaxValue(190);
-        gauge.setMinValue(0);
-        gauge.setUpperText("dBA");
-        gauge.setLowerText("LAeq: ");
-        gauge.setValuePerNick(5);
-        gauge.setMajorNickInterval(4);
-        gauge.setTotalNicks(60);
+
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        dBAText = (TextView) findViewById(R.id.text_dba);
+        dBCText = (TextView) findViewById(R.id.text_dbc);
+        lAeqText = (TextView) findViewById(R.id.text_laeq);
 
 
         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(this);
@@ -125,13 +127,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         public void onReceive(Context context, Intent intent) {
             switch (Objects.requireNonNull(intent.getAction())) {
                 case Constants.ACTION.DBA_BROADCAST_ACTION:
-                    double rms = intent.getDoubleExtra("dBA", 0);
-                    gauge.moveToValue((float) rms);
-                    Log.d("MAIN", String.valueOf(rms));
+                    double dBA = intent.getDoubleExtra("dBA", 0);
+                    double dBC = intent.getDoubleExtra("dBC_max", 0);
+                    dBCText.setText((int) dBC + "dBCmax");
+
+                    // progressbar value checks
+                    if (dBA < 0) {
+                        dBA = 0;
+                    }
+                    if (dBA > progressBar.getMax()) {
+                        dBA = progressBar.getMax();
+                    }
+                    ObjectAnimator.ofInt(progressBar, "progress", (int) dBA).start();
+                    dBAText.setText(String.valueOf((int) dBA) + "dBA");
+                    Log.d("MAIN", String.valueOf(dBA));
                     break;
                 case Constants.ACTION.LAEQ_BROADCAST_ACTION:
-                    double mean = intent.getDoubleExtra("LAeq", 0);
-                    gauge.setLowerText("LAeq: " + String.valueOf(Math.round(mean)));
+                    double lAeq = intent.getDoubleExtra("LAeq", 0);
+                    lAeqText.setText("LAeq: " + (int) lAeq + "dB");
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                     if (isOnline()) {
@@ -168,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Intent intent = new Intent(this, SettingsActivity.class);
                     startActivity(intent);
                 } else {
-                    Toast.makeText(this, "Stop measurement before go to settings", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.settings_info, Toast.LENGTH_LONG).show();
                 }
                 return true;
             default:
