@@ -13,12 +13,12 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 public class PhoneDB extends SQLiteAssetHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "PhoneFilter.db";
-    public static final String TABLE_NAME = "phones";
+    private static final String TABLE_NAME = "phones";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_MARKETNAME = "market_name";
     public static final String COLUMN_MODEL = "model";
     public static final String COLUMN_IMEI = "imei";
-    public static final String COLUMN_FILTERS = "filters";
+    private static final String COLUMN_FILTERS = "filters";
     public static final String COLUMN_TIMESTAMP = "timestamp";
 
     public PhoneDB(Context context) {
@@ -63,6 +63,7 @@ public class PhoneDB extends SQLiteAssetHelper {
         int marketRows = marketRes.getCount();
         modelRes.close();
         imeiRes.close();
+        marketRes.close();
 
         if (imeiRows > 0) {
             calibType = "Uniquely Calibrated";

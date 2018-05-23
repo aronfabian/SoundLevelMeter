@@ -28,16 +28,14 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
                         switch (key) {
                             case "class_type":
-                                String classType = prefs.getString("class_type", Constants.MEASUREMENT_CLASS.CLASS_ONE);
-                                RecorderService.classType = classType;
+                                RecorderService.classType = prefs.getString("class_type", Constants.MEASUREMENT_CLASS.CLASS_ONE);
                                 break;
                             case "rms_time":
                                 String rmsTime = prefs.getString("class_type", "sec");
                                 RecorderService.setRmsUpdateTime(rmsTime);
                                 break;
                             case "calibration":
-                                Boolean calibMode = prefs.getBoolean("calibration", false);
-                                RecorderService.saveFile = calibMode;
+                                RecorderService.saveFile = prefs.getBoolean("calibration", false);
                                 break;
                             default:
                                 break;
