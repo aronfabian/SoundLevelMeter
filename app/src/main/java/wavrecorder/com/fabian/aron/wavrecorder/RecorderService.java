@@ -274,7 +274,8 @@ public class RecorderService extends Service {
                     if (AUDIOSOURCE == MediaRecorder.AudioSource.UNPROCESSED) {
                         offset = 129.98;
                     } else {
-                        offset = 112.35;
+                        //                       offset = 112.35;
+                        offset = 120.00;
                     }
                     long dBBase = 32768 * 32768;
 
