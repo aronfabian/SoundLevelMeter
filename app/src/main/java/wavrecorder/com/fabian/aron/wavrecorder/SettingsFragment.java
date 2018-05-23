@@ -31,7 +31,7 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                 RecorderService.classType = prefs.getString("class_type", Constants.MEASUREMENT_CLASS.CLASS_ONE);
                                 break;
                             case "rms_time":
-                                String rmsTime = prefs.getString("class_type", "sec");
+                                String rmsTime = prefs.getString("rms_time", "sec");
                                 RecorderService.setRmsUpdateTime(rmsTime);
                                 break;
                             case "calibration":
