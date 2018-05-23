@@ -45,12 +45,13 @@ public class RecorderService extends Service {
     private boolean isRunning = false;
     private AudioRecord recorder;
     private DataOutputStream wavOut = null;
-    private FileOutputStream os;
+    private FileOutputStream infoOut = null;
     private File wavFile = null;
+    private File infoFile = null;
     public static boolean saveFile = false;
     private final Object lock = new Object();
     public static boolean isAlive = false;
-    private final Intent instIntent = new Intent(Constants.ACTION.DBA_BROADCAST_ACTION);
+    private final Intent instIntent = new Intent(Constants.ACTION.DBA_DBC_BROADCAST_ACTION);
     private final Intent meanIntent = new Intent(Constants.ACTION.LAEQ_BROADCAST_ACTION);
     private int secCount = 0;
     private long sampleCount = 0;
@@ -63,7 +64,7 @@ public class RecorderService extends Service {
     private long sumSquaresA = 0;
     private long sumSquaresC;
     private long rmsSquareA = 0;
-    public long rmsSquareC;
+    private long rmsSquareC;
     private long sumRmsSquareA = 0;
     private int measLength = 0;
 
@@ -176,6 +177,7 @@ public class RecorderService extends Service {
         FilterPlugin.setFilters(this, classType);
 
         recorder = new AudioRecord(AUDIOSOURCE, SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT, 2 * BUFFERSIZE);
+        FileOutputStream os;
         if (saveFile) {
             File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
             dir.mkdirs();
@@ -187,10 +189,15 @@ public class RecorderService extends Service {
             String minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
             String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
             wavFile = new File(dir, Constants.deviceUniqueID + "_" + year + "_" + month + "_" + day + "_" + hour + "_" + minute + "_" + second + ".wav");
+            infoFile = new File(dir, Constants.deviceUniqueID + "_info.txt");
             os = null;
         }
         try {
             if (saveFile) {
+                infoOut = new FileOutputStream(infoFile);
+                String infos = "Device Unique ID (IMEI): " + Constants.deviceUniqueID + "\nDevice Model: " + Constants.deviceModel + "\nMarket Name: " + Constants.deviceMarketName;
+                infoOut.write(infos.getBytes());
+                infoOut.close();
                 os = new FileOutputStream(wavFile);
                 wavOut = new DataOutputStream(os);
                 WavHelper.writeWavHeader(wavOut, CHANNELCONFIG, SAMPLERATE, AUDIOFORMAT);
@@ -329,6 +336,14 @@ public class RecorderService extends Service {
 
         } catch (IOException ex) {
             ex.printStackTrace();
+        } finally {
+            if (infoOut != null) {
+                try {
+                    infoOut.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
 
