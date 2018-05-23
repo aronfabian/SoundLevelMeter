@@ -218,7 +218,7 @@ public class RecorderService extends Service {
                     while (isRunning) {
                         synchronized (lock) {
                             read = recorder.read(buffer, 0, buffer.length);
-                            //Log.d(LOG_TAG, "Original " + Arrays.toString(buffer));
+                            Log.d(LOG_TAG, "read:  " + Integer.toString(read));
                             floats = shortToFloat(buffer);
                             if (filterNumC != 0) {
                                 FilterPlugin.filterProcessingC(floats, floatsC, read);
