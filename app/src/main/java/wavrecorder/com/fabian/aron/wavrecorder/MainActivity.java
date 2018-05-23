@@ -39,8 +39,8 @@ import permissions.dispatcher.RuntimePermissions;
 @RuntimePermissions
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    PhoneDB db;
-    MainActivity target = this;
+    private PhoneDB db;
+    private final MainActivity target = this;
     private ProgressBar progressBar;
     private TextView dBAText;
     private TextView dBCText;
@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void onReceive(Context context, Intent intent) {
             switch (Objects.requireNonNull(intent.getAction())) {
-                case Constants.ACTION.DBA_BROADCAST_ACTION:
+                case Constants.ACTION.DBA_DBC_BROADCAST_ACTION:
                     double dBA = intent.getDoubleExtra("dBA", 0);
                     double dBC = intent.getDoubleExtra("dBC_max", 0);
                     dBCText.setText((int) dBC + "dBCmax");
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter();
-        filter.addAction(Constants.ACTION.DBA_BROADCAST_ACTION);
+        filter.addAction(Constants.ACTION.DBA_DBC_BROADCAST_ACTION);
         filter.addAction(Constants.ACTION.LAEQ_BROADCAST_ACTION);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(broadcastReceiver, filter);

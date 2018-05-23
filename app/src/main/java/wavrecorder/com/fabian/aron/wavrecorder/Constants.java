@@ -14,7 +14,7 @@ public class Constants {
         String STARTFOREGROUND_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.startforeground";
         String STOPFOREGROUND_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.stopforeground";
         String NOTIFSTOPFOREGROUND_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.notifstopforeground";
-        String DBA_BROADCAST_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.dba";
+        String DBA_DBC_BROADCAST_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.dbadbc";
         String LAEQ_BROADCAST_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.laeq";
         String SECBUTTON_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.secbutton";
         String MILLISECBUTTON_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.millisecbutton";
