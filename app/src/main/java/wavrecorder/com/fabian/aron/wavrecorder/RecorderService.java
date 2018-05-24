@@ -39,9 +39,9 @@ public class RecorderService extends Service {
     private static final int AUDIOFORMAT = AudioFormat.ENCODING_PCM_16BIT;
     private static int AUDIOSOURCE;
     public static String classType = Constants.MEASUREMENT_CLASS.CLASS_ONE;
-    private final int BUFFERSIZE = AudioRecord.getMinBufferSize(SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT);
-    private short[] buffer = new short[BUFFERSIZE];
-    private short[] bufferC = new short[BUFFERSIZE];
+    private final int REC_BUFFERSIZE = 2 * AudioRecord.getMinBufferSize(SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT);
+    private short[] buffer = new short[REC_BUFFERSIZE / 2]; //REC_BUFFERSIZE / 4
+    private short[] bufferC = new short[REC_BUFFERSIZE / 2]; //REC_BUFFERSIZE / 4
     private boolean isRunning = false;
     private AudioRecord recorder;
     private DataOutputStream wavOut = null;
@@ -81,6 +81,8 @@ public class RecorderService extends Service {
     public RecorderService() {
         super();
         isAlive = true;
+        Log.d(LOG_TAG, "Recording buffersize in Bytes:  " + Integer.toString(REC_BUFFERSIZE));
+        Log.d(LOG_TAG, "Temporary buffersize in Samples:  " + Integer.toString(buffer.length));
     }
 
     @Nullable
@@ -176,7 +178,7 @@ public class RecorderService extends Service {
         FilterPlugin.filterProcessCreate(SAMPLERATE);
         FilterPlugin.setFilters(this, classType);
 
-        recorder = new AudioRecord(AUDIOSOURCE, SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT, 2 * BUFFERSIZE);
+        recorder = new AudioRecord(AUDIOSOURCE, SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT, REC_BUFFERSIZE);
         FileOutputStream os;
         if (saveFile) {
             File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
@@ -206,39 +208,49 @@ public class RecorderService extends Service {
             isRunning = true;
             Thread processingThread = new Thread(new Runnable() {
 
-                int read;
+                int nSamplesRead, maxSamplesToWrite;
                 long total = 0;
                 final byte[] b = new byte[2];
+                final byte[] bBuffer = new byte[buffer.length * 2];
                 float[] floats = new float[buffer.length];
                 float[] floatsC = new float[buffer.length];
+                Long tsLong1, tsLong2, dtsLong;
+                String ts;
 
                 @Override
                 public void run() {
 
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
+
                     while (isRunning) {
                         synchronized (lock) {
-                            read = recorder.read(buffer, 0, buffer.length);
-                            Log.d(LOG_TAG, "read:  " + Integer.toString(read));
-                            floats = shortToFloat(buffer);
-                            if (filterNumC != 0) {
-                                FilterPlugin.filterProcessingC(floats, floatsC, read);
-                            } else {
-                                floatsC = floats;
-                            }
-                            if (filterNumA != 0) {
-                                FilterPlugin.filterProcessingA(floats, floats, read);
-                            }
-                            buffer = floatToShort(floats);
-                            bufferC = floatToShort(floatsC);
-                            //Log.d(LOG_TAG, "Filtered " + Arrays.toString(buffer));
+                            tsLong1 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
+                            nSamplesRead = recorder.read(buffer, 0, buffer.length);
+                            tsLong2 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
+                            dtsLong = (tsLong2 - tsLong1) / 1000000;
+                            Log.d(LOG_TAG, Integer.toString(nSamplesRead) + " samples read.");
+                            Log.d(LOG_TAG, "Wait time for read: " + dtsLong.toString() + " milli seconds");
+//                            floats = shortToFloat(buffer);
+//                            if (filterNumC != 0) {
+//                                FilterPlugin.filterProcessingC(floats, floatsC, nSamplesRead);
+//                            } else {
+//                                floatsC = floats;
+//                            }
+//                            if (filterNumA != 0) {
+//                                FilterPlugin.filterProcessingA(floats, floats, nSamplesRead);
+//                            }
+//                            buffer = floatToShort(floats);
+//                            bufferC = floatToShort(floatsC);
+//                            //Log.d(LOG_TAG, "Filtered " + Arrays.toString(buffer));
 
-                            calcRMS(read);
+//                            calcRMS(nSamplesRead);
 
                             if (saveFile) {
                                 // WAVs cannot be > 4 GB due to the use of 32 bit unsigned integers.
-                                if (total + read > 4294967295L) {
+                                if (total + nSamplesRead > 4294967295L) {
                                     // Write as many bytes as we can before hitting the max size
-                                    for (int i = 0; i < read && total <= 4294967295L; i++, total++) {
+                                    maxSamplesToWrite = (int) (4294967295L - total);
+                                    for (int i = 0; i < maxSamplesToWrite; i++) {
                                         try {
                                             b[0] = (byte) (buffer[i] & 0x00FF);
                                             b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
@@ -247,20 +259,26 @@ public class RecorderService extends Service {
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
+                                        total += maxSamplesToWrite;
                                     }
                                 } else {
                                     // Write out the entire read buffer
                                     try {
-                                        for (int i = 0; i < read; i++) {
-                                            b[0] = (byte) (buffer[i] & 0x00FF);
-                                            b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
-                                            wavOut.write(b, 0, 2);
+//                                        for (int i = 0; i < nSamplesRead; i++) {
+//                                            b[0] = (byte) (buffer[i] & 0x00FF);
+//                                            b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
+//                                            wavOut.write(b, 0, 2);
+//                                        }
+                                        for (int i = 0; i < nSamplesRead; i++) {
+                                            bBuffer[i << 1] = (byte) (buffer[i] & 0x00FF);
+                                            bBuffer[(i << 1) + 1] = (byte) ((buffer[i] >> 8) & 0x00FF);
                                         }
+                                        wavOut.write(bBuffer, 0, nSamplesRead << 1);
 
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-                                    total += read;
+                                    total += nSamplesRead;
                                 }
                             }
                         }
@@ -281,8 +299,7 @@ public class RecorderService extends Service {
                     if (AUDIOSOURCE == MediaRecorder.AudioSource.UNPROCESSED) {
                         offset = 129.98;
                     } else {
-                        //                       offset = 112.35;
-                        offset = 120.00;
+                        offset = 112.35;
                     }
                     long dBBase = 32768 * 32768;
 
