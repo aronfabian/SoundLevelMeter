@@ -10,11 +10,14 @@ import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.IBinder;
+import android.os.Process;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
@@ -25,6 +28,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+
+import static java.lang.Math.max;
 
 
 /**
@@ -39,9 +44,11 @@ public class RecorderService extends Service {
     private static final int AUDIOFORMAT = AudioFormat.ENCODING_PCM_16BIT;
     private static int AUDIOSOURCE;
     public static String classType = Constants.MEASUREMENT_CLASS.CLASS_ONE;
+
     private final int REC_BUFFERSIZE = 2 * AudioRecord.getMinBufferSize(SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT);
     private short[] buffer = new short[REC_BUFFERSIZE / 2]; //REC_BUFFERSIZE / 4
     private short[] bufferC = new short[REC_BUFFERSIZE / 2]; //REC_BUFFERSIZE / 4
+
     private boolean isRunning = false;
     private AudioRecord recorder;
     private DataOutputStream wavOut = null;
@@ -177,8 +184,18 @@ public class RecorderService extends Service {
     private void startRecording() {
         FilterPlugin.filterProcessCreate(SAMPLERATE);
         FilterPlugin.setFilters(this, classType);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        saveFile = prefs.getBoolean("calibration", false);
+        classType = prefs.getString("class_type", Constants.MEASUREMENT_CLASS.CLASS_ONE);
+        String rmsTime = prefs.getString("rms_time", "sec");
+        setRmsUpdateTime(rmsTime);
+
+
 
         recorder = new AudioRecord(AUDIOSOURCE, SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT, REC_BUFFERSIZE);
+        Log.d(LOG_TAG, "Record Buffersize: " + recorder.getBufferSizeInFrames());
+        Log.d(LOG_TAG, "Record_Buffersize: " + RECORD_BUFFERSIZE);
+
         FileOutputStream os;
         if (saveFile) {
             File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
@@ -208,7 +225,9 @@ public class RecorderService extends Service {
             isRunning = true;
             Thread processingThread = new Thread(new Runnable() {
 
+
                 int nSamplesRead, maxSamplesToWrite;
+
                 long total = 0;
                 final byte[] b = new byte[2];
                 final byte[] bBuffer = new byte[buffer.length * 2];
@@ -219,31 +238,33 @@ public class RecorderService extends Service {
 
                 @Override
                 public void run() {
+                    android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
 
                     android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
 
                     while (isRunning) {
                         synchronized (lock) {
+
                             tsLong1 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
                             nSamplesRead = recorder.read(buffer, 0, buffer.length);
                             tsLong2 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
                             dtsLong = (tsLong2 - tsLong1) / 1000000;
                             Log.d(LOG_TAG, Integer.toString(nSamplesRead) + " samples read.");
                             Log.d(LOG_TAG, "Wait time for read: " + dtsLong.toString() + " milli seconds");
-//                            floats = shortToFloat(buffer);
-//                            if (filterNumC != 0) {
-//                                FilterPlugin.filterProcessingC(floats, floatsC, nSamplesRead);
-//                            } else {
-//                                floatsC = floats;
-//                            }
-//                            if (filterNumA != 0) {
-//                                FilterPlugin.filterProcessingA(floats, floats, nSamplesRead);
-//                            }
-//                            buffer = floatToShort(floats);
-//                            bufferC = floatToShort(floatsC);
-//                            //Log.d(LOG_TAG, "Filtered " + Arrays.toString(buffer));
+                            floats = shortToFloat(buffer);
+                            if (filterNumC != 0) {
+                                FilterPlugin.filterProcessingC(floats, floatsC, nSamplesRead);
+                            } else {
+                                floatsC = floats;
+                            }
+                            if (filterNumA != 0) {
+                                FilterPlugin.filterProcessingA(floats, floats, nSamplesRead);
+                            }
+                            buffer = floatToShort(floats);
+                            bufferC = floatToShort(floatsC);
+                            //Log.d(LOG_TAG, "Filtered " + Arrays.toString(buffer));
 
-//                            calcRMS(nSamplesRead);
+                            calcRMS(nSamplesRead);
 
                             if (saveFile) {
                                 // WAVs cannot be > 4 GB due to the use of 32 bit unsigned integers.
@@ -251,14 +272,18 @@ public class RecorderService extends Service {
                                     // Write as many bytes as we can before hitting the max size
                                     maxSamplesToWrite = (int) (4294967295L - total);
                                     for (int i = 0; i < maxSamplesToWrite; i++) {
+
                                         try {
-                                            b[0] = (byte) (buffer[i] & 0x00FF);
-                                            b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
-                                            wavOut.write(b, 0, 2);
+                                            for (int i = 0; i < samplesRead; i++) {
+                                                b[0] = (byte) (buffer[i] & 0x00FF);
+                                                b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
+                                                wavOut.write(b, 0, 2);
+                                            }
 
                                         } catch (IOException e) {
                                             e.printStackTrace();
                                         }
+
                                         total += maxSamplesToWrite;
                                     }
                                 } else {
@@ -279,13 +304,15 @@ public class RecorderService extends Service {
                                         e.printStackTrace();
                                     }
                                     total += nSamplesRead;
+
                                 }
                             }
+
                         }
                     }
                 }
 
-                private void calcRMS(int length) {
+                private void calcRMS(int lengthInSamples) {
 
 //                  UNPROCESSED:
 //                      Audio input sensitivity MUST be set such that a 1000 Hz sinusoidal tone source
@@ -304,7 +331,7 @@ public class RecorderService extends Service {
                     long dBBase = 32768 * 32768;
 
                     int i = 0;
-                    for (short value : Arrays.copyOfRange(buffer, 0, length - 1)) {
+                    for (short value : Arrays.copyOfRange(buffer, 0, lengthInSamples - 1)) {
                         sumSquaresA += (long) value * (long) value;
                         sumSquaresC += (long) bufferC[i] * (long) bufferC[i];
                         i++;
