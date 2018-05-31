@@ -16,7 +16,6 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Environment;
 import android.os.IBinder;
-import android.os.Process;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
@@ -28,8 +27,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-
-import static java.lang.Math.max;
 
 
 /**
@@ -194,7 +191,7 @@ public class RecorderService extends Service {
 
         recorder = new AudioRecord(AUDIOSOURCE, SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT, REC_BUFFERSIZE);
         Log.d(LOG_TAG, "Record Buffersize: " + recorder.getBufferSizeInFrames());
-        Log.d(LOG_TAG, "Record_Buffersize: " + RECORD_BUFFERSIZE);
+        Log.d(LOG_TAG, "Record_Buffersize: " + REC_BUFFERSIZE);
 
         FileOutputStream os;
         if (saveFile) {
@@ -238,7 +235,6 @@ public class RecorderService extends Service {
 
                 @Override
                 public void run() {
-                    android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_AUDIO);
 
                     android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_AUDIO);
 
@@ -274,9 +270,9 @@ public class RecorderService extends Service {
                                     for (int i = 0; i < maxSamplesToWrite; i++) {
 
                                         try {
-                                            for (int i = 0; i < samplesRead; i++) {
-                                                b[0] = (byte) (buffer[i] & 0x00FF);
-                                                b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
+                                            for (int j = 0; j < nSamplesRead; i++) {
+                                                b[0] = (byte) (buffer[j] & 0x00FF);
+                                                b[1] = (byte) ((buffer[j] >> 8) & 0x00FF);
                                                 wavOut.write(b, 0, 2);
                                             }
 
