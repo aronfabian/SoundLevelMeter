@@ -42,9 +42,13 @@ public class RecorderService extends Service {
     private static int AUDIOSOURCE;
     public static String classType = Constants.MEASUREMENT_CLASS.CLASS_ONE;
 
-    private final int REC_BUFFERSIZE = 2 * AudioRecord.getMinBufferSize(SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT);
+    private final int REC_BUFFERSIZE = 16384; //2 * AudioRecord.getMinBufferSize(SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT); // Returns a number in bytes
     private short[] buffer = new short[REC_BUFFERSIZE / 2]; //REC_BUFFERSIZE / 4
     private short[] bufferC = new short[REC_BUFFERSIZE / 2]; //REC_BUFFERSIZE / 4
+
+    private byte[] bBuffer = new byte[65536 * 2]; // This is the byte buffer, which is written to the wav file
+    int bBufferLengthInSamples = bBuffer.length / 2;
+
 
     private boolean isRunning = false;
     private AudioRecord recorder;
@@ -75,18 +79,22 @@ public class RecorderService extends Service {
     static {
         if (MediaRecorder.getAudioSourceMax() >= 9) {
             AUDIOSOURCE = MediaRecorder.AudioSource.UNPROCESSED;
+            Log.d(LOG_TAG, "UNPROCESSED audio source was available.");
         } else if (MediaRecorder.getAudioSourceMax() >= 6) {
             AUDIOSOURCE = MediaRecorder.AudioSource.VOICE_RECOGNITION;
+            Log.d(LOG_TAG, "VOICE_RECOGNITION audio source was only available.");
         } else {
             AUDIOSOURCE = MediaRecorder.AudioSource.MIC;
+            Log.d(LOG_TAG, "Only standard MIC input was available.");
         }
     }
 
     public RecorderService() {
         super();
         isAlive = true;
-        Log.d(LOG_TAG, "Recording buffersize in Bytes:  " + Integer.toString(REC_BUFFERSIZE));
-        Log.d(LOG_TAG, "Temporary buffersize in Samples:  " + Integer.toString(buffer.length));
+        Log.d(LOG_TAG, "Audio object's whished recording buffer size in Bytes:  " + Integer.toString(REC_BUFFERSIZE));
+        Log.d(LOG_TAG, "Processing buffer size in Samples:  " + Integer.toString(buffer.length));
+        Log.d(LOG_TAG, "Wave file's buffer size in Samples:  " + Integer.toString(bBufferLengthInSamples));
     }
 
     @Nullable
@@ -188,10 +196,9 @@ public class RecorderService extends Service {
         setRmsUpdateTime(rmsTime);
 
 
-
         recorder = new AudioRecord(AUDIOSOURCE, SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT, REC_BUFFERSIZE);
-        Log.d(LOG_TAG, "Record Buffersize: " + recorder.getBufferSizeInFrames());
-        Log.d(LOG_TAG, "Record_Buffersize: " + REC_BUFFERSIZE);
+        Log.d(LOG_TAG, "Created AudioRecord object's buffersize in Samples: " + recorder.getBufferSizeInFrames());
+//        Log.d(LOG_TAG, "Record_Buffersize: " + REC_BUFFERSIZE);
 
         FileOutputStream os;
         if (saveFile) {
@@ -225,9 +232,9 @@ public class RecorderService extends Service {
 
                 int nSamplesRead, maxSamplesToWrite;
 
-                long total = 0;
+                long total = 44; // Wav file's total length in byte. (Offset: Wav header's size.)
                 final byte[] b = new byte[2];
-                final byte[] bBuffer = new byte[buffer.length * 2];
+                int bBufferPosInSamples = 0;
                 float[] floats = new float[buffer.length];
                 float[] floatsC = new float[buffer.length];
                 Long tsLong1, tsLong2, dtsLong;
@@ -245,6 +252,7 @@ public class RecorderService extends Service {
                             nSamplesRead = recorder.read(buffer, 0, buffer.length);
                             tsLong2 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
                             dtsLong = (tsLong2 - tsLong1) / 1000000;
+                            Log.d(LOG_TAG, "Buffer pos = " + Integer.toString(bBufferPosInSamples));
                             Log.d(LOG_TAG, Integer.toString(nSamplesRead) + " samples read.");
                             Log.d(LOG_TAG, "Wait time for read: " + dtsLong.toString() + " milli seconds");
                             floats = shortToFloat(buffer);
@@ -264,7 +272,7 @@ public class RecorderService extends Service {
 
                             if (saveFile) {
                                 // WAVs cannot be > 4 GB due to the use of 32 bit unsigned integers.
-                                if (total + nSamplesRead > 4294967295L) {
+                                if (total + nSamplesRead * 2 > 4294967295L) {
                                     // Write as many bytes as we can before hitting the max size
                                     maxSamplesToWrite = (int) (4294967295L - total);
                                     for (int i = 0; i < maxSamplesToWrite; i++) {
@@ -283,8 +291,35 @@ public class RecorderService extends Service {
                                         total += maxSamplesToWrite;
                                     }
                                 } else {
+                                    int i = bBufferPosInSamples;
+                                    int j = 0;
+
+                                    if (bBufferPosInSamples + nSamplesRead >= bBufferLengthInSamples) {
+                                        // new samples will fill wav buffer, which has to be flushed than
+                                        for (; i < bBufferLengthInSamples; i++, j++) {
+                                            bBuffer[i << 1] = (byte) (buffer[j] & 0x00FF);
+                                            bBuffer[(i << 1) + 1] = (byte) ((buffer[j] >> 8) & 0x00FF);
+                                        }
+                                        bBufferPosInSamples = 0;
+                                        i = 0;
+                                        try {
+                                            wavOut.write(bBuffer, 0, bBufferLengthInSamples << 1);
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                        Log.d(LOG_TAG, Integer.toString(bBufferLengthInSamples) + " samples wrote to wav file.");
+
+                                        total += bBufferLengthInSamples * 2;
+                                    }
+
+                                    for (; j < nSamplesRead; i++, j++) {
+                                        bBuffer[i << 1] = (byte) (buffer[j] & 0x00FF);
+                                        bBuffer[(i << 1) + 1] = (byte) ((buffer[j] >> 8) & 0x00FF);
+                                    }
+                                    bBufferPosInSamples = i;
+
                                     // Write out the entire read buffer
-                                    try {
+/*                                    try {
 //                                        for (int i = 0; i < nSamplesRead; i++) {
 //                                            b[0] = (byte) (buffer[i] & 0x00FF);
 //                                            b[1] = (byte) ((buffer[i] >> 8) & 0x00FF);
@@ -300,7 +335,7 @@ public class RecorderService extends Service {
                                         e.printStackTrace();
                                     }
                                     total += nSamplesRead;
-
+*/
                                 }
                             }
 
@@ -375,9 +410,14 @@ public class RecorderService extends Service {
             }
             Toast.makeText(this, R.string.start_meas, Toast.LENGTH_LONG).show();
 
-        } catch (IOException ex) {
+        } catch (
+                IOException ex)
+
+        {
             ex.printStackTrace();
-        } finally {
+        } finally
+
+        {
             if (infoOut != null) {
                 try {
                     infoOut.close();

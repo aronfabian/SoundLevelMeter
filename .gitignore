@@ -7,3 +7,5 @@
 /build
 /captures
 .externalNativeBuild
+*.gradle
+app/src/main/jni/CMakeLists.txt
