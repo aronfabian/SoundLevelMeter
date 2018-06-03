@@ -23,10 +23,12 @@ public class FilterPlugin {
      */
     public static native void filterProcessCreate(int samplerate);
 
+
     /**
      * Deletes FilterProcess instance.
      */
     public static native void filterProcessDelete();
+
 
     /**
      * Creates a parametric filter and add to the series.
@@ -37,6 +39,17 @@ public class FilterPlugin {
      * @return number of filters in the series
      */
     public static native int addParametricFilterA(float frequency, float octaveWidth, float dbGain);
+
+
+    /**
+     * Creates a parametric filter and add to the series.
+     *
+     * @param filterType     frequency in Hertz
+     * @param cutOffFreqency bandwidth in octave
+     * @param resonance      gain in dB
+     * @return number of filters in the series
+     */
+    public static native int addResonantFilterA(int filterType, float cutOffFreqency, float resonance);
 
     /**
      * Process the input data with the predefined filters

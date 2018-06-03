@@ -20,6 +20,7 @@ public class PhoneDB extends SQLiteAssetHelper {
     public static final String COLUMN_IMEI = "imei";
     private static final String COLUMN_FILTERS = "filters";
     public static final String COLUMN_TIMESTAMP = "timestamp";
+    private static final String LOG_TAG = "PhoneDB";
 
     public PhoneDB(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,6 +51,10 @@ public class PhoneDB extends SQLiteAssetHelper {
 
 
     public String getCalibType(String model, String imei, String marketName) {
+//        Log.d(LOG_TAG, "Model = " + model);
+//        Log.d(LOG_TAG, "IMEI = " + imei);
+//        Log.d(LOG_TAG, "Market Name = " + marketName);
+
         String calibType;
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor imeiRes = db.rawQuery("select * from " + TABLE_NAME + " where imei ='" + imei + "'", null);
@@ -58,6 +63,7 @@ public class PhoneDB extends SQLiteAssetHelper {
         imeiRes.moveToFirst();
         modelRes.moveToFirst();
         marketRes.moveToFirst();
+
         int imeiRows = imeiRes.getCount();
         int modelRows = modelRes.getCount();
         int marketRows = marketRes.getCount();
@@ -69,10 +75,10 @@ public class PhoneDB extends SQLiteAssetHelper {
             calibType = "Uniquely Calibrated";
             Constants.calibrationType = CalibrationType.UNIQUELY_CALIBRATED;
         } else if (marketRows > 0) {
-            calibType = "Modelly Calibrated";
+            calibType = "Modelly Calibrated (market)";
             Constants.calibrationType = CalibrationType.MODELLY_CALIBRATED;
         } else if (modelRows > 0) {
-            calibType = "Modelly Calibrated";
+            calibType = "Modelly Calibrated (model)";
             Constants.calibrationType = CalibrationType.MODELLY_CALIBRATED;
         } else {
             calibType = "Not Calibrated";

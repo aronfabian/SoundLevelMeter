@@ -33,6 +33,11 @@ import java.util.Arrays;
  * Created by Aron Fabian 2018. 03. 23..
  */
 
+enum FILTER_TYPES {
+    HPF, LPF, Parametric
+};
+
+
 public class RecorderService extends Service {
 
     private static final String LOG_TAG = "RecorderService";
@@ -42,9 +47,9 @@ public class RecorderService extends Service {
     private static int AUDIOSOURCE;
     public static String classType = Constants.MEASUREMENT_CLASS.CLASS_ONE;
 
-    private final int REC_BUFFERSIZE = 16384; //2 * AudioRecord.getMinBufferSize(SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT); // Returns a number in bytes
-    private short[] buffer = new short[REC_BUFFERSIZE / 2]; //REC_BUFFERSIZE / 4
-    private short[] bufferC = new short[REC_BUFFERSIZE / 2]; //REC_BUFFERSIZE / 4
+    private final int REC_BUFFERSIZE = 4 * AudioRecord.getMinBufferSize(SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT); // Returns a number in bytes
+    private short[] buffer = new short[REC_BUFFERSIZE / 4]; //REC_BUFFERSIZE / 4
+    private short[] bufferC = new short[REC_BUFFERSIZE / 4]; //REC_BUFFERSIZE / 4
 
     private byte[] bBuffer = new byte[65536 * 2]; // This is the byte buffer, which is written to the wav file
     int bBufferLengthInSamples = bBuffer.length / 2;
@@ -64,7 +69,7 @@ public class RecorderService extends Service {
     private int secCount = 0;
     private long sampleCount = 0;
     private static int rmsUpdateTime = SAMPLERATE;
-    public static int filterNumA = 0;
+    public static int filterNumA = 1;
     public static int filterNumC = 0;
     private double dBA;
     private double dBC = 0;
@@ -188,7 +193,9 @@ public class RecorderService extends Service {
      */
     private void startRecording() {
         FilterPlugin.filterProcessCreate(SAMPLERATE);
-        FilterPlugin.setFilters(this, classType);
+        //FilterPlugin.setFilters(this, classType);
+        //       FilterPlugin.addParametricFilterA(1000, 1, -20);
+        FilterPlugin.addResonantFilterA(Constants.HPF, 4000, (float) (1.0 / Math.sqrt(2.0) / 10.0)); // resonance = Q/10; Q is lin gain at cut-off frequency
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         saveFile = prefs.getBoolean("calibration", false);
         classType = prefs.getString("class_type", Constants.MEASUREMENT_CLASS.CLASS_ONE);

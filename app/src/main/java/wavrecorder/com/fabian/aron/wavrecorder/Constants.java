@@ -37,5 +37,9 @@ public class Constants {
         String CLASS_TWO = "2";
     }
 
+    public static final int HPF = 0;
+    public static final int LPF = 1;
+    public static final int PARAMETRIC = 2;
+
 
 }
