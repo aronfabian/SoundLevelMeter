@@ -24,5 +24,15 @@
         android:summary="@string/calib_sum"
         android:title="@string/calib_title" />
 
+    <Preference
+        android:key="calib_settings"
+        android:summary="asd"
+        android:title="asd">
+        <intent android:action="wavrecorder.com.fabian.aron.wavrecorder.CalibrationActivity"/>
+    </Preference>
+
+
+
+
 
 </android.support.v7.preference.PreferenceScreen>

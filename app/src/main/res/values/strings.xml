@@ -18,6 +18,7 @@
     <string name="start_meas">Measurement started!</string>
     <string name="stop_meas">Measurement stopped!</string>
     <string name="settings_info">Stop measurement before go to settings!</string>
-
-
+    <string name="send_btn">Send</string>
+    <string name="download_btn">Download</string>
+    <string name="calibration">Calibration</string>
 </resources>

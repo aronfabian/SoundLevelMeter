@@ -9,3 +9,4 @@
 .externalNativeBuild
 *.gradle
 app/src/main/jni/CMakeLists.txt
+.idea/caches/build_file_checksums.ser

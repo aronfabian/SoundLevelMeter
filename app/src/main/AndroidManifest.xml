@@ -24,6 +24,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".CalibrationActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="wavrecorder.com.fabian.aron.wavrecorder.CalibrationActivity" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
         <service android:name=".RecorderService" />
         <service
