@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,15 +57,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startButton.setOnClickListener(this);
         stopButton.setOnClickListener(this);
 
-
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         dBAText = (TextView) findViewById(R.id.text_dba);
         dBCText = (TextView) findViewById(R.id.text_dbc);
         lAeqText = (TextView) findViewById(R.id.text_laeq);
 
-
         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(this);
-
     }
 
     @Override

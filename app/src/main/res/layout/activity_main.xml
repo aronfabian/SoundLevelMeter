@@ -21,9 +21,8 @@
         android:id="@+id/btn_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:text="STOP"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_start"
         app:layout_constraintTop_toTopOf="@+id/btn_start" />
 
@@ -31,19 +30,17 @@
         android:id="@+id/text_calib"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text=""
-        app:layout_constraintEnd_toEndOf="@+id/btn_stop"
+        app:layout_constraintStart_toStartOf="@+id/btn_start"
         app:layout_constraintTop_toBottomOf="@+id/btn_stop" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="32dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:indeterminate="false"
         android:max="120"
         android:progressDrawable="@drawable/spl_progressbar"
@@ -55,34 +52,125 @@
         android:id="@+id/text_dba"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="dBA"
-        app:layout_constraintStart_toStartOf="@+id/progressBar"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/progressBar"
+        app:layout_constraintTop_toTopOf="@+id/progressBar" />
 
     <TextView
         android:id="@+id/text_dbc"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="dBCmax"
-        app:layout_constraintEnd_toEndOf="@+id/progressBar"
-        app:layout_constraintStart_toStartOf="@+id/progressBar"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/progressBar"
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
     <TextView
         android:id="@+id/text_laeq"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:gravity="center_vertical|center_horizontal"
         android:text="LAeq"
+        android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="@+id/progressBar"
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        android:ems="10"
+        android:inputType="time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_stop"
+        app:layout_constraintTop_toTopOf="@+id/btn_start" />
+
+    <TextView
+        android:id="@+id/text_overdrive"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/overdrive"
+        android:textColor="@android:color/holo_red_dark"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/editText"
+        app:layout_constraintTop_toBottomOf="@+id/editText" />
+
+    <TextView
+        android:id="@+id/text_u3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/table_under3"
+        app:layout_constraintStart_toStartOf="@+id/text_recom"
+        app:layout_constraintTop_toBottomOf="@+id/text_recom" />
+
+    <TextView
+        android:id="@+id/text_3_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/table_3_to_14"
+        app:layout_constraintStart_toStartOf="@+id/text_u3"
+        app:layout_constraintTop_toBottomOf="@+id/text_u3" />
+
+    <TextView
+        android:id="@+id/text_14_18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/table_14_to_18"
+        app:layout_constraintStart_toStartOf="@+id/text_u3"
+        app:layout_constraintTop_toBottomOf="@+id/text_3_14" />
+
+    <TextView
+        android:id="@+id/text_u3_recom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/text_u3"
+        tools:layout_editor_absoluteY="271dp" />
+
+    <TextView
+        android:id="@+id/text_3_14_recom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/text_3_14"
+        app:layout_constraintTop_toTopOf="@+id/text_3_14" />
+
+    <TextView
+        android:id="@+id/text_14_18_recom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/text_14_18"
+        app:layout_constraintTop_toTopOf="@+id/text_14_18" />
+
+    <TextView
+        android:id="@+id/text_recom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/table_recomm"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/progressBar"
+        app:layout_constraintTop_toBottomOf="@+id/text_laeq" />
 
 
 </android.support.constraint.ConstraintLayout>

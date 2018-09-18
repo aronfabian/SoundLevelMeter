@@ -23,5 +23,17 @@
     <string name="download_btn">Letöltés</string>
     <string name="calibration">Kalibráció</string>
     <string name="calib_summary">A telefon mikrofonjának kalibrálása.</string>
+    <string name="table_category">Zajszint kategória-jel</string>
+    <string name="table_db">Irányérték LAeq,M30 dB</string>
+    <string name="table_recomm">Hallásvédelem szempontjából tett ajánlások</string>
+    <string name="table_under3">3 évesnél fiatalabb</string>
+    <string name="table_3_to_14">3-14 év között</string>
+    <string name="table_14_to_18">14-18 év között</string>
+    <string name="table_no_limit">Nincs korlátozás</string>
+    <string name="table_notrecomm">Nem ajánlott</string>
+    <string name="table_max_2">Legfeljebb 2 óra tartózkodás</string>
+    <string name="table_max_45">Legfeljebb 45 perc tartózkodás</string>
+    <string name="overdrive">Túlvezérlés!</string>
+
 
 </resources>
