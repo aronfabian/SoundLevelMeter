@@ -48,6 +48,7 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     implementation 'com.android.support:preference-v7:26.1.0'
+    implementation 'dev.dworks.libs:volleyplus:+'
     implementation("com.github.hotchemi:permissionsdispatcher:3.1.0") {
         // if you don't use android.app.Fragment you can exclude support for them
         exclude module: "support-v13"

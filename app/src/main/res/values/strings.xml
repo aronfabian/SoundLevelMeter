@@ -21,4 +21,5 @@
     <string name="send_btn">Send</string>
     <string name="download_btn">Download</string>
     <string name="calibration">Calibration</string>
+    <string name="calib_summary">Calibration of the mobile phone\'s microphone.</string>
 </resources>
