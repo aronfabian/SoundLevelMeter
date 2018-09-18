@@ -1,12 +1,13 @@
 apply plugin: 'com.android.application'
 
-def superpowered_sdk_path = '/Users/ferko/SuperpoweredSDK/Superpowered'
+def superpowered_sdk_path = 'C:/Users/arons/SuperpoweredSDK/Superpowered'
 
 android { // main settings for your application
+    compileSdkVersion = 26
+    buildToolsVersion = '27'
     defaultConfig {
         applicationId "com.fabian.aron.wavrecorder"
         minSdkVersion 23 // more than 95% of all active Android devices
-//        minSdkVersion 19 // more than 95% of all active Android devices
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
@@ -34,10 +35,10 @@ android { // main settings for your application
             path 'src/main/jni/CMakeLists.txt'
         }
     }
-    productFlavors {
-    }
     compileSdkVersion 26
     buildToolsVersion '27.0.3'
+    productFlavors {
+    }
 }
 
 dependencies {
@@ -47,7 +48,8 @@ dependencies {
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
     implementation 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
     implementation 'com.android.support:preference-v7:26.1.0'
-    implementation('com.github.hotchemi:permissionsdispatcher:3.1.0') {
+    implementation 'dev.dworks.libs:volleyplus:+'
+    implementation("com.github.hotchemi:permissionsdispatcher:3.1.0") {
         // if you don't use android.app.Fragment you can exclude support for them
         exclude module: "support-v13"
     }

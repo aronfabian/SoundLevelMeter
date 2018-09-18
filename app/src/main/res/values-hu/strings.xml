@@ -19,4 +19,9 @@
     <string name="start_meas">A mérés elindult!</string>
     <string name="stop_meas">A mérés leállt!</string>
     <string name="settings_info">Állítsd le a mérést a beállítások módosításához!</string>
+    <string name="send_btn">Küldés</string>
+    <string name="download_btn">Letöltés</string>
+    <string name="calibration">Kalibráció</string>
+    <string name="calib_summary">A telefon mikrofonjának kalibrálása.</string>
+
 </resources>

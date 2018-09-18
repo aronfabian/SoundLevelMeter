@@ -69,7 +69,7 @@ public class RecorderService extends Service {
     private int secCount = 0;
     private long sampleCount = 0;
     private static int rmsUpdateTime = SAMPLERATE;
-    public static int filterNumA = 1;
+    public static int filterNumA = 0;
     public static int filterNumC = 0;
     private double dBA;
     private double dBC = 0;
@@ -114,6 +114,7 @@ public class RecorderService extends Service {
 
         if (intent != null) {
             if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
+                saveFile = intent.getBooleanExtra("CalibrationMode", false);
                 RecorderService.isAlive = true;
                 Notification notification;
                 Intent notifStopIntent = new Intent(this, RecorderService.class);
@@ -189,18 +190,22 @@ public class RecorderService extends Service {
     }
 
     /**
-     * Creates an AudioRecorder instace and starts a thread to read and write audiodata.
+     * Creates an AudioRecorder instance and starts a thread to read and write audio data.
      */
     private void startRecording() {
-        FilterPlugin.filterProcessCreate(SAMPLERATE);
-        //FilterPlugin.setFilters(this, classType);
-        //       FilterPlugin.addParametricFilterA(1000, 1, -20);
-        FilterPlugin.addResonantFilterA(Constants.HPF, 4000, (float) (1.0 / Math.sqrt(2.0) / 10.0)); // resonance = Q/10; Q is lin gain at cut-off frequency
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        saveFile = prefs.getBoolean("calibration", false);
-        classType = prefs.getString("class_type", Constants.MEASUREMENT_CLASS.CLASS_ONE);
+        //saveFile = prefs.getBoolean("calibration", false); // calibration mode
+        classType = prefs.getString("class_type", Constants.MEASUREMENT_CLASS.CLASS_ONE); // accurate
         String rmsTime = prefs.getString("rms_time", "sec");
         setRmsUpdateTime(rmsTime);
+
+        FilterPlugin.filterProcessCreate(SAMPLERATE);
+        if(!saveFile){
+            FilterPlugin.setFilters(this, classType);
+        }
+        //FilterPlugin.addParametricFilterA(1000, 1, -20);
+        //FilterPlugin.addResonantFilterA(Constants.HPF, 4000, (float) (1.0 / Math.sqrt(2.0) / 10.0)); // resonance = Q/10; Q is lin gain at cut-off frequency
+
 
 
         recorder = new AudioRecord(AUDIOSOURCE, SAMPLERATE, CHANNELCONFIG, AUDIOFORMAT, REC_BUFFERSIZE);

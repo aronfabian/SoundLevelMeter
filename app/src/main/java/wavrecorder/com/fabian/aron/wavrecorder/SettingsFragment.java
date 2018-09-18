@@ -34,9 +34,9 @@ public class SettingsFragment extends PreferenceFragmentCompat {
                                 String rmsTime = prefs.getString("rms_time", "sec");
                                 RecorderService.setRmsUpdateTime(rmsTime);
                                 break;
-                            case "calibration":
-                                RecorderService.saveFile = prefs.getBoolean("calibration", false);
-                                break;
+//                            case "calibration":
+//                                RecorderService.saveFile = prefs.getBoolean("calibration", false);
+//                                break;
                             default:
                                 break;
                         }
