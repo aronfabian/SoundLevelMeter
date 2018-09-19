@@ -25,14 +25,16 @@
     <string name="table_category">Category of noise level</string>
     <string name="table_db">Guidance value LAeq,M30 dB</string>
     <string name="table_recomm">Hearing protection recommendations</string>
-    <string name="table_under3">Under 3 years</string>
-    <string name="table_3_to_14">Between 3 and 14 years</string>
-    <string name="table_14_to_18">Between 14 and 18 years</string>
+    <string name="table_under3">Under 3 years:</string>
+    <string name="table_3_to_14">Between 3 and 14 years:</string>
+    <string name="table_14_to_18">Between 14 and 18 years:</string>
     <string name="table_no_limit">No limitations</string>
     <string name="table_notrecomm">Not recommended</string>
     <string name="table_max_2">Up to 2 hours stay</string>
     <string name="table_max_45">Up to 45 minutes stay</string>
     <string name="overdrive">Overdrive!</string>
+    <string name="age_table">Age groups</string>
+    <string name="age_table_summary">Select which age groups you want to be visible.</string>
 
 
 

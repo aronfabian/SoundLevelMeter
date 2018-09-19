@@ -112,7 +112,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/table_under3"
         app:layout_constraintStart_toStartOf="@+id/text_recom"
         app:layout_constraintTop_toBottomOf="@+id/text_recom" />
@@ -141,7 +141,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         app:layout_constraintStart_toEndOf="@+id/text_u3"
-        tools:layout_editor_absoluteY="271dp" />
+        app:layout_constraintTop_toTopOf="@+id/text_u3" />
 
     <TextView
         android:id="@+id/text_3_14_recom"
@@ -164,13 +164,31 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/table_recomm"
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/progressBar"
         app:layout_constraintTop_toBottomOf="@+id/text_laeq" />
+
+    <android.support.constraint.Group
+        android:id="@+id/group_u3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="text_u3,text_u3_recom" />
+
+    <android.support.constraint.Group
+        android:id="@+id/group_3_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="text_3_14_recom,text_3_14" />
+
+    <android.support.constraint.Group
+        android:id="@+id/group_14_18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="text_14_18_recom,text_14_18" />
 
 
 </android.support.constraint.ConstraintLayout>

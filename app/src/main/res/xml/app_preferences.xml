@@ -23,6 +23,18 @@
         <!--android:key="calibration"-->
         <!--android:summary="@string/calib_sum"-->
         <!--android:title="@string/calib_title" />-->
+    <CheckBoxPreference
+        android:key="u3"
+        android:title="@string/table_under3"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="b314"
+        android:title="@string/table_3_to_14"
+        android:defaultValue="true" />
+    <CheckBoxPreference
+        android:key="b1418"
+        android:title="@string/table_14_to_18"
+        android:defaultValue="true" />
 
     <Preference
         android:key="calib_settings"
