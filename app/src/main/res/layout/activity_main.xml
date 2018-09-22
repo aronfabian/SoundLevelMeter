@@ -85,13 +85,15 @@
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/text_time"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:cursorVisible="false"
         android:ems="10"
         android:inputType="time"
+        android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_stop"
         app:layout_constraintTop_toTopOf="@+id/btn_start" />
@@ -104,8 +106,8 @@
         android:text="@string/overdrive"
         android:textColor="@android:color/holo_red_dark"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/editText"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
+        app:layout_constraintStart_toStartOf="@+id/text_time"
+        app:layout_constraintTop_toBottomOf="@+id/text_time" />
 
     <TextView
         android:id="@+id/text_u3"

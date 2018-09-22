@@ -113,7 +113,7 @@ public class CalibrationActivity extends Activity implements View.OnClickListene
     }
 
     private void sendWavFile() {
-        String url = "";
+        String url = "http://last.hit.bme.hu/anima/upload/ovd_a_fuled_upload.php";
         SimpleMultiPartRequest smr = new SimpleMultiPartRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -126,15 +126,20 @@ public class CalibrationActivity extends Activity implements View.OnClickListene
             public void onErrorResponse(VolleyError error) {
                 Log.d("Error Response", error.getMessage());
                 //Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+
             }
-        });
+        }
+        );
+        smr.addStringParam("USER","123");
+
         File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
         File wavFile  = lastFileModified(dir.getAbsolutePath());
-        smr.addFile("param file", wavFile.getAbsolutePath());
-
+        smr.addFile("file", wavFile.getAbsolutePath());
+        Log.d("MULTIPART: ",smr.toString());
 
         RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         mRequestQueue.add(smr);
+
     }
 
     public static File lastFileModified(String dir) {

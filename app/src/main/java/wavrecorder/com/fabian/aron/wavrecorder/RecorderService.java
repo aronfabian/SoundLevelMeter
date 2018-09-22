@@ -409,6 +409,7 @@ public class RecorderService extends Service {
                             secCount = 0;
                             lAeq = (10 * Math.log10((double) sumRmsSquareA / measLength / dBBase)) + offset;
                             meanIntent.putExtra("LAeq", lAeq);
+                            meanIntent.putExtra("measLength",measLength);
                             sendBroadcast(meanIntent);
                         }
 

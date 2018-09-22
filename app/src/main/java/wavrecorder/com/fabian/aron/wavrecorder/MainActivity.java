@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.TimedText;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
@@ -28,9 +29,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.sql.Time;
 import java.util.Objects;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnPermissionDenied;
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView u3Text;
     private TextView b314Text;
     private TextView b1418Text;
+    private EditText timeText;
 
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
@@ -69,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         u3Text = (TextView) findViewById(R.id.text_u3_recom);
         b314Text = (TextView) findViewById(R.id.text_3_14_recom);
         b1418Text = (TextView) findViewById(R.id.text_14_18_recom);
+        timeText = (EditText) findViewById(R.id.text_time);
 
         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(this);
     }
@@ -152,6 +158,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     double lAeq = intent.getDoubleExtra("LAeq", 0);
                     lAeqText.setText("LAeq: " + (int) lAeq + "dB");
                     setRecommendationTexts(lAeq);
+                    int measLengthSec = intent.getIntExtra("measLength",0);
+                    Time t = new Time(measLengthSec*1000);
+                    timeText.setText(t.toString());
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                     if (isOnline()) {
