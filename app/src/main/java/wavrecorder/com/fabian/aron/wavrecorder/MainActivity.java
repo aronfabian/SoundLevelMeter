@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         b314Text = (TextView) findViewById(R.id.text_3_14_recom);
         b1418Text = (TextView) findViewById(R.id.text_14_18_recom);
         timeText = (EditText) findViewById(R.id.text_time);
-
+        timeText.setFocusable(false);
         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(this);
     }
 
@@ -159,10 +159,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     lAeqText.setText("LAeq: " + (int) lAeq + "dB");
                     setRecommendationTexts(lAeq);
                     int measLengthSec = intent.getIntExtra("measLength",0);
-                    Time t = new Time(measLengthSec*1000);
-                    timeText.setText(t.toString());
-                    Log.d("measLength", String.valueOf(measLengthSec));
-                    Log.d("time", t.toString());
+                    int min = measLengthSec / 60;
+                    int sec = measLengthSec - (min*60);
+                    int hour = min / 60;
+                    min = min - (hour*60);
+                    timeText.setText(String.format("%02d:%02d:%02d",hour,min,sec));
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                     if (isOnline()) {
