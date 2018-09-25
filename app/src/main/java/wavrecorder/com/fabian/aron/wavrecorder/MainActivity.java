@@ -2,7 +2,10 @@ package wavrecorder.com.fabian.aron.wavrecorder;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.app.job.JobInfo;
+import android.app.job.JobScheduler;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,6 +18,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -35,6 +39,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Time;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnPermissionDenied;
@@ -134,9 +143,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+
+    List<Double> LAeqHistory = new ArrayList<>();
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            double lAeq = 0;
             switch (Objects.requireNonNull(intent.getAction())) {
                 case Constants.ACTION.DBA_DBC_BROADCAST_ACTION:
                     double dBA = intent.getDoubleExtra("dBA", 0);
@@ -155,27 +167,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("MAIN", String.valueOf(dBA));
                     break;
                 case Constants.ACTION.LAEQ_BROADCAST_ACTION:
-                    double lAeq = intent.getDoubleExtra("LAeq", 0);
+                    lAeq = intent.getDoubleExtra("LAeq", 0);
                     lAeqText.setText("LAeq: " + (int) lAeq + "dB");
+                    LAeqHistory.add(lAeq);
                     setRecommendationTexts(lAeq);
                     int measLengthSec = intent.getIntExtra("measLength",0);
                     int min = measLengthSec / 60;
                     int sec = measLengthSec - (min*60);
-                    int hour = min / 60;
-                    min = min - (hour*60);
-                    timeText.setText(String.format("%02d:%02d:%02d",hour,min,sec));
+                    int h = min / 60;
+                    min = min - (h*60);
+                    timeText.setText(String.format("%02d:%02d:%02d",h,min,sec));
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                     if (isOnline()) {
                         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(target);
-//                        if (RecorderService.isAlive) {
-//                            new AlertDialog.Builder(target)
-//                                    .setCancelable(true)
-//                                    .setMessage(R.string.update_info)
-//                                    .show();
-//
-//                        }
                     }
+                    break;
+                case Constants.ACTION.RECORDERSTOPPED_ACTION:
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor prefEditor = prefs.edit();
+                    prefEditor.putString("LAeqHistory",LAeqHistory.toString());
+                    prefEditor.putString("LAeqLast",String.valueOf(lAeq));
+                    java.util.Calendar calendar = java.util.Calendar.getInstance();
+                    String year = String.valueOf(calendar.get(java.util.Calendar.YEAR));
+                    String month = String.valueOf(calendar.get(java.util.Calendar.MONTH) + 1);
+                    String day = String.valueOf(calendar.get(java.util.Calendar.DAY_OF_MONTH));
+                    String hour = String.valueOf(calendar.get(java.util.Calendar.HOUR_OF_DAY));
+                    String minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
+                    String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
+                    Log.d("date",year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second);
+                    prefEditor.putString("dateTime", year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                        prefEditor.apply();
+                    } else {
+                        prefEditor.commit();
+                    }
+                    LAeqHistory.clear();
+                    Intent formIntent = new Intent(context, FormActivity.class);
+                    startActivity(formIntent);
                     break;
                 default:
                     break;
@@ -252,6 +281,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         filter.addAction(Constants.ACTION.DBA_DBC_BROADCAST_ACTION);
         filter.addAction(Constants.ACTION.LAEQ_BROADCAST_ACTION);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction(Constants.ACTION.RECORDERSTOPPED_ACTION);
         registerReceiver(broadcastReceiver, filter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         Group u3Group = (Group) findViewById(R.id.group_u3);

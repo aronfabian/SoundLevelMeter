@@ -36,6 +36,33 @@
     <string name="overdrive">Túlvezérlés!</string>
     <string name="age_table">Korcsoportok</string>
     <string name="age_table_summary">Válassza ki, hogy mely korcsoportokat szeretné látni.</string>
+    <string name="form_type">Rendezvény típus, pl.: koncert</string>
+    <string name="form_location">Helyszín</string>
+    <string name="form_distance">Távolásg a hangrendszertől</string>
+    <string name="form_loudness">Hangosságérzet</string>
+    <string name="form_comment">Hozzászólás</string>
+    <string name="form_targetaudince">Közönség célcsoport</string>
+    <string name="form_soundsystem">Hangrendszer típus</string>
+    <string name="form_eventlength">Rendezvény hossza</string>
+    <string name="audience_1">Óvodások</string>
+    <string name="audience_2">Kisiskolások</string>
+    <string name="audience_3">Középiskolások</string>
+    <string name="audience_4">Nagykorúak</string>
+    <string name="loudnessvalue_0">Halk</string>
+    <string name="loudnessvalue_1">Normális</string>
+    <string name="loudnessvalue_2">Hangos</string>
+    <string name="loudnessvalue_3">Nagyon hangos</string>
+    <string name="eventlengthsvalue_0">Értelmezhetetlen/nem tudom</string>
+    <string name="eventlengthsvalue_1">&lt; 1 óra</string>
+    <string name="eventlengthsvalue_2">1-2 óra</string>
+    <string name="eventlengthsvalue_3">2-4 óra</string>
+    <string name="eventlengthsvalue_4">&gt; 4 óra</string>
+    <string name="soundsyssvalue_0">Nem tudom</string>
+    <string name="soundsyssvalue_1">Line array</string>
+    <string name="soundsyssvalue_2">1-1 (nagy) hangsugárzó</string>
+    <string name="soundsyssvalue_3">Sok kicsi hangsugárzó</string>
+
+
 
 
 </resources>

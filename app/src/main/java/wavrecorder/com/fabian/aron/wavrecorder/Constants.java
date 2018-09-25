@@ -18,6 +18,7 @@ public class Constants {
         String LAEQ_BROADCAST_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.laeq";
         String SECBUTTON_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.secbutton";
         String MILLISECBUTTON_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.millisecbutton";
+        String RECORDERSTOPPED_ACTION = "wavrecorder.com.fabian.aron.wavrecorder.recorderstopped";
     }
 
     public interface NOTIFICATION_ID {

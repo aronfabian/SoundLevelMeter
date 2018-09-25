@@ -35,7 +35,34 @@
     <string name="overdrive">Overdrive!</string>
     <string name="age_table">Age groups</string>
     <string name="age_table_summary">Select which age groups you want to be visible.</string>
-
+    <string name="title_activity_from">FromActivity</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_form">FormActivity</string>
+    <string name="form_type">Event type, e.g. concert</string>
+    <string name="form_location">Location</string>
+    <string name="form_distance">Distance from sound system</string>
+    <string name="form_loudness">Loudness</string>
+    <string name="form_comment">Comment</string>
+    <string name="form_targetaudince">Target audience</string>
+    <string name="form_soundsystem">Sound system type</string>
+    <string name="form_eventlength">Event length</string>
+    <string name="audience_1">Kindergarteners</string>
+    <string name="audience_2">Elementary school children</string>
+    <string name="audience_3">High school children</string>
+    <string name="audience_4">Adults</string>
+    <string name="loudnessvalue_0">Silent</string>
+    <string name="loudnessvalue_1">Normal</string>
+    <string name="loudnessvalue_2">Loud</string>
+    <string name="loudnessvalue_3">Very loud</string>
+    <string name="eventlengthsvalue_0">Not known</string>
+    <string name="eventlengthsvalue_1">&lt; 1 hour</string>
+    <string name="eventlengthsvalue_2">1-2 hour</string>
+    <string name="eventlengthsvalue_3">2-4 hour</string>
+    <string name="eventlengthsvalue_4">&gt; 4 hour</string>
+    <string name="soundsyssvalue_0">Don\'t know</string>
+    <string name="soundsyssvalue_1">Line array</string>
+    <string name="soundsyssvalue_2">1-1 (great) speaker</string>
+    <string name="soundsyssvalue_3">Many small speakers</string>
 
 
 </resources>

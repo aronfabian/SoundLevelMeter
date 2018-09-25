@@ -167,14 +167,10 @@ public class RecorderService extends Service {
 
                     Log.i(LOG_TAG, "Received Stop Foreground Intent");
                     stopForeground(true);
+                    Intent stopIntent = new Intent(Constants.ACTION.RECORDERSTOPPED_ACTION);
+                    stopIntent.putExtra("recorderStopped", true);
+                    sendBroadcast(stopIntent);
                     mNotificationManager.cancel(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE);
-                    JobScheduler jobScheduler =
-                            (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                    jobScheduler.schedule(new JobInfo.Builder(4,
-                            new ComponentName(this, UploadJobService.class))
-                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_NOT_ROAMING)
-                            .setRequiresCharging(false)
-                            .build());
                     stopSelf();
                 }
             }
