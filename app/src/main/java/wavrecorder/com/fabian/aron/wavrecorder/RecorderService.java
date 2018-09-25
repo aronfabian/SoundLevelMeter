@@ -201,7 +201,10 @@ public class RecorderService extends Service {
 
         FilterPlugin.filterProcessCreate(SAMPLERATE);
         if(!saveFile){
-            FilterPlugin.setFilters(this, classType);
+            FilterPlugin.setFiltersFromPref(this, classType);
+        } else {
+            filterNumA = 0;
+            filterNumC = 0;
         }
         //FilterPlugin.addParametricFilterA(1000, 1, -20);
         //FilterPlugin.addResonantFilterA(Constants.HPF, 4000, (float) (1.0 / Math.sqrt(2.0) / 10.0)); // resonance = Q/10; Q is lin gain at cut-off frequency

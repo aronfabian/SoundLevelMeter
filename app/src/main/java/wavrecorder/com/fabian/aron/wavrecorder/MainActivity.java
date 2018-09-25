@@ -161,6 +161,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     int measLengthSec = intent.getIntExtra("measLength",0);
                     Time t = new Time(measLengthSec*1000);
                     timeText.setText(t.toString());
+                    Log.d("measLength", String.valueOf(measLengthSec));
+                    Log.d("time", t.toString());
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                     if (isOnline()) {

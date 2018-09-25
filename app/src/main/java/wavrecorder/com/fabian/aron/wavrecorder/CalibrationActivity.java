@@ -2,10 +2,16 @@ package wavrecorder.com.fabian.aron.wavrecorder;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,12 +21,18 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
+import com.android.volley.request.JsonObjectRequest;
+import com.android.volley.request.JsonRequest;
 import com.android.volley.request.SimpleMultiPartRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileFilter;
-import java.net.URL;
+
 
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.OnPermissionDenied;
@@ -28,14 +40,13 @@ import permissions.dispatcher.OnShowRationale;
 import permissions.dispatcher.PermissionRequest;
 import permissions.dispatcher.RuntimePermissions;
 
-import static android.provider.ContactsContract.CommonDataKinds.Website.URL;
 
 /**
  * Created by Aron Fabian on 2018. 09. 15..
  */
 
 @RuntimePermissions
-public class CalibrationActivity extends Activity implements View.OnClickListener{
+public class CalibrationActivity extends AppCompatActivity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +60,7 @@ public class CalibrationActivity extends Activity implements View.OnClickListene
         stopButton.setOnClickListener(this);
         sendButton.setOnClickListener(this);
         downloadButton.setOnClickListener(this);
+
     }
 
     @Override
@@ -107,9 +119,76 @@ public class CalibrationActivity extends Activity implements View.OnClickListene
                 break;
         }
     }
-
+    JSONObject bestMatchPhone = null;
     private void downloadCalibrationFile() {
-        
+        String url = "http://last.hit.bme.hu/anima/upload/PhoneDatabase.json";
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,url,null, new Response.Listener<JSONObject>(){
+            @Override
+            public void onResponse(JSONObject response) {
+                //Log.d("JSON: ",response.toString());
+                try{
+                    // Get the JSON array
+                    JSONArray array = response.getJSONArray("Phones");
+
+                    // Loop through the array elements
+
+                    for(int i=0;i<array.length();i++){
+                        JSONObject phone = array.getJSONObject(i);
+                        String marketName = phone.getString("market_name");
+                        String modelName =  phone.getString("model");
+                        String imei =  phone.getString("imei");
+                        String phoneId =  phone.getString("phone_id");
+
+                       if(marketName.equals(Constants.deviceMarketName)){
+                           Constants.calibrationType = CalibrationType.MODELLY_CALIBRATED;
+                           bestMatchPhone = new JSONObject(phone.toString());
+                       }
+                       if(modelName.equals(Constants.deviceModel)){
+                           Constants.calibrationType = CalibrationType.MODELLY_CALIBRATED;
+                           bestMatchPhone = new JSONObject(phone.toString());
+                       }
+                       if(phoneId.equals(Constants.deviceUniqueID) || imei.equals(Constants.deviceUniqueID)){
+                           Constants.calibrationType = CalibrationType.UNIQUELY_CALIBRATED;
+                           bestMatchPhone = new JSONObject(phone.toString());
+                       }
+
+                    }
+                    if(Constants.calibrationType != CalibrationType.NOT_CALIBRATED){
+                        saveCalibratianData();
+                    }
+                }catch (JSONException e){
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                System.out.println("Error [" + error + "]");
+            }
+        });
+        RequestQueue requestQueue  = Volley.newRequestQueue(getApplicationContext());
+        requestQueue.add(request);
+    }
+
+    private void saveCalibratianData() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putString("calibrationType",Constants.calibrationType.toString());
+        try {
+            if(bestMatchPhone != null){
+                prefEditor.putString("classOneCalibData",bestMatchPhone.getString("Class1"));
+                prefEditor.putString("classTwoCalibData",bestMatchPhone.getString("Class2"));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            prefEditor.apply();
+        } else {
+            prefEditor.commit();
+        }
+
     }
 
     private void sendWavFile() {

@@ -175,3 +175,38 @@ Java_wavrecorder_com_fabian_aron_wavrecorder_FilterPlugin_addParametricFilterC(
     return fp->cFilterNum;
 }
 
+extern "C" JNIEXPORT jint
+Java_wavrecorder_com_fabian_aron_wavrecorder_FilterPlugin_addResonantFilterC(
+        JNIEnv *javaEnvironment,
+        jobject __unused obj,
+        jint filterType,      // see enum FILTER_TYPES
+        jfloat cutOffFreqency,   // cut-off frequency
+        jfloat resonance) { // resonance at cut-off frequency
+
+
+    if (fp->cFilterNum == fp->MAX_FILTER_NUM) {
+        return fp->cFilterNum;
+    }
+
+    SuperpoweredFilter *res_filt;
+
+    switch (filterType) {
+        case HPF:
+            res_filt = new SuperpoweredFilter(SuperpoweredFilter_Resonant_Highpass, fp->samplerate);
+            break;
+        case LPF:
+            res_filt = new SuperpoweredFilter(SuperpoweredFilter_Resonant_Lowpass, fp->samplerate);
+            break;
+    }
+
+    res_filt->setResonantParameters(cutOffFreqency, resonance);
+    res_filt->enable(true);
+
+    fp->cFilterList[fp->cFilterNum] = res_filt;
+    if (fp->cFilterNum < fp->MAX_FILTER_NUM) {
+        fp->cFilterNum++;
+    }
+
+    return fp->cFilterNum;
+}
+
