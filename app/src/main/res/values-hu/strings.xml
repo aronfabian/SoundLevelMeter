@@ -56,11 +56,16 @@
     <string name="eventlengthsvalue_1">&lt; 1 óra</string>
     <string name="eventlengthsvalue_2">1-2 óra</string>
     <string name="eventlengthsvalue_3">2-4 óra</string>
-    <string name="eventlengthsvalue_4">&gt; 4 óra</string>
+    <string name="eventlengthsvalue_4">4 óra &lt;</string>
     <string name="soundsyssvalue_0">Nem tudom</string>
     <string name="soundsyssvalue_1">Line array</string>
     <string name="soundsyssvalue_2">1-1 (nagy) hangsugárzó</string>
     <string name="soundsyssvalue_3">Sok kicsi hangsugárzó</string>
+    <string name="form_not_filled">Kérlek, töltsd ki az összes mezőt!</string>
+    <string name="settings">Beállítások</string>
+    <string name="not_calib">Nem kalibrált</string>
+    <string name="model_calib">Modell kalibrált</string>
+    <string name="uniq_calib">Egyedileg kalibrált</string>
 
 
 

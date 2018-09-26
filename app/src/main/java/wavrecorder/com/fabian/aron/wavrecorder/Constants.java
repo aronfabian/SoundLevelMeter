@@ -42,5 +42,20 @@ public class Constants {
     public static final int LPF = 1;
     public static final int PARAMETRIC = 2;
 
+    // SharedPreferences keys
+    public static final String FORM_TYPE = "form_type";
+    public static final String FORM_LOCATION = "form_location";
+    public static final String FORM_TIME = "form_time";
+    public static final String FORM_SPL = "form_spl";
+    public static final String FORM_DISTANCE = "form_distance";
+    public static final String FORM_LOUDNESS = "form_loudness";
+    public static final String FORM_COMMENT = "form_comment";
+    public static final String FORM_EVENTLENGTH = "form_eventlength";
+    public static final String FORM_SOUNDSYS = "form_soundsys";
+    public static final String FORM_TARGETAUD = "form_targetaud";
+    public static final String LAEQ_HISTORY = "laeq_history";
+    public static final String LAEQ_LAST = "laeq_last";
+    public static final String CALIBTYPE = "calibration_type";
+
 
 }

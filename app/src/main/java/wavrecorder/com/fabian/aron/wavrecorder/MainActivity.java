@@ -118,8 +118,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Constants.deviceMarketName = info.manufacturer + " " + info.marketName;
                 }
                 Constants.deviceUniqueID = getDeviceIMEI();
-                TextView calibText = (TextView) findViewById(R.id.text_calib);
-                calibText.setText(db.getCalibType(Build.MODEL, Constants.deviceUniqueID, Constants.deviceMarketName));
+
                 if ((info.marketName.equals(Build.MODEL)) && !isOnline()) {
                     moreDeviceInfo();
                 }
@@ -144,11 +143,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    List<Double> LAeqHistory = new ArrayList<>();
+    List<String> LAeqHistory = new ArrayList<>();
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            double lAeq = 0;
             switch (Objects.requireNonNull(intent.getAction())) {
                 case Constants.ACTION.DBA_DBC_BROADCAST_ACTION:
                     double dBA = intent.getDoubleExtra("dBA", 0);
@@ -167,9 +165,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("MAIN", String.valueOf(dBA));
                     break;
                 case Constants.ACTION.LAEQ_BROADCAST_ACTION:
-                    lAeq = intent.getDoubleExtra("LAeq", 0);
-                    lAeqText.setText("LAeq: " + (int) lAeq + "dB");
-                    LAeqHistory.add(lAeq);
+                    double lAeq = intent.getDoubleExtra("LAeq", 0);
+                    lAeqText.setText(String.format("LAeq: %.1fdB",lAeq));
+                    //lAeqText.setText("LAeq: " + (int) lAeq + "dB");
+                    LAeqHistory.add(String.format("%.1f",lAeq));
                     setRecommendationTexts(lAeq);
                     int measLengthSec = intent.getIntExtra("measLength",0);
                     int min = measLengthSec / 60;
@@ -186,17 +185,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case Constants.ACTION.RECORDERSTOPPED_ACTION:
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor prefEditor = prefs.edit();
-                    prefEditor.putString("LAeqHistory",LAeqHistory.toString());
-                    prefEditor.putString("LAeqLast",String.valueOf(lAeq));
-                    java.util.Calendar calendar = java.util.Calendar.getInstance();
-                    String year = String.valueOf(calendar.get(java.util.Calendar.YEAR));
-                    String month = String.valueOf(calendar.get(java.util.Calendar.MONTH) + 1);
-                    String day = String.valueOf(calendar.get(java.util.Calendar.DAY_OF_MONTH));
-                    String hour = String.valueOf(calendar.get(java.util.Calendar.HOUR_OF_DAY));
-                    String minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
-                    String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
-                    Log.d("date",year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second);
-                    prefEditor.putString("dateTime", year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second);
+                    prefEditor.putString(Constants.LAEQ_HISTORY,LAeqHistory.toString());
+                    int spl_rms = Math.round(Float.valueOf(LAeqHistory.get(LAeqHistory.size()-1)));
+                    Log.d("spl_rms",String.valueOf(spl_rms));
+                    prefEditor.putString(Constants.LAEQ_LAST,String.valueOf(spl_rms));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
                         prefEditor.apply();
                     } else {
@@ -303,7 +295,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else {
             b1418Group.setVisibility(View.GONE);
         }
-
+        String calibPref = prefs.getString(Constants.CALIBTYPE,CalibrationType.NOT_CALIBRATED.toString());
+        Constants.calibrationType = CalibrationType.valueOf(calibPref);
+        TextView calibText = (TextView) findViewById(R.id.text_calib);
+        switch(Constants.calibrationType){
+            case NOT_CALIBRATED:
+                calibText.setText(R.string.not_calib);
+                break;
+            case MODELLY_CALIBRATED:
+                calibText.setText(R.string.model_calib);
+                break;
+            case UNIQUELY_CALIBRATED:
+                calibText.setText(R.string.uniq_calib);
+                break;
+        }
 
     }
 

@@ -7,8 +7,8 @@
         android:entryValues="@array/list_classvalues"
         android:defaultValue="1"
         android:key="class_type"
-        android:summary="@string/meas_acc_title"
-        android:title="@string/meas_acc_sum" />
+        android:summary="@string/meas_acc_sum"
+        android:title="@string/meas_acc_title" />
 
     <ListPreference
         android:entries="@array/list_rms"

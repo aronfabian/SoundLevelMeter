@@ -19,31 +19,40 @@
                 android:id="@+id/input_type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:ems="10"
                 android:hint="@string/form_type"
-                android:inputType="text" />
+                android:inputType="text"
+                android:maxLength="100" />
 
             <EditText
                 android:id="@+id/input_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:ems="10"
                 android:hint="@string/form_location"
-                android:inputType="text" />
+                android:inputType="text"
+                android:maxLength="100" />
 
             <EditText
                 android:id="@+id/input_distance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:ems="10"
                 android:hint="@string/form_distance"
-                android:inputType="numberDecimal" />
+                android:inputType="numberDecimal"
+                android:maxLength="4" />
 
             <TextView
                 android:id="@+id/text_loudness"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/form_loudness" />
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/form_loudness"
+                android:textSize="18sp" />
 
             <SeekBar
                 android:id="@+id/input_loudness"
@@ -57,6 +66,7 @@
                 android:id="@+id/text_loudnesvalue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:text="@string/loudnessvalue_1"
                 android:textAlignment="center" />
 
@@ -64,7 +74,10 @@
                 android:id="@+id/text_eventlength"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/form_eventlength" />
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/form_eventlength"
+                android:textSize="18sp" />
 
             <SeekBar
                 android:id="@+id/input_eventlength"
@@ -78,6 +91,7 @@
                 android:id="@+id/text_eventlengthvalue"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
                 android:text="@string/eventlengthsvalue_3"
                 android:textAlignment="center" />
 
@@ -85,55 +99,85 @@
                 android:id="@+id/text_soundsystem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/form_soundsystem" />
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/form_soundsystem"
+                android:textSize="18sp" />
 
-            <SeekBar
-                android:id="@+id/input_soundsystem"
-                style="@style/Widget.AppCompat.SeekBar.Discrete"
+            <RadioGroup
+                android:id="@+id/sound_system"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="3"
-                android:progress="2" />
+                android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="0dp">
 
-            <TextView
-                android:id="@+id/text_soundsystemvalue"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/soundsyssvalue_2"
-                android:textAlignment="center" />
+                <RadioButton
+                    android:id="@+id/soundsys_0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/soundsyssvalue_0" />
+
+                <RadioButton
+                    android:id="@+id/soundsys_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/soundsyssvalue_1" />
+
+                <RadioButton
+                    android:id="@+id/soundsys_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/soundsyssvalue_2" />
+
+                <RadioButton
+                    android:id="@+id/soundsys_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/soundsyssvalue_3" />
+            </RadioGroup>
 
             <TextView
                 android:id="@+id/text_targetaudience"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/form_targetaudince" />
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/form_targetaudince"
+                android:textSize="18sp" />
 
             <RadioGroup
                 android:id="@+id/target_audience"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
                 android:orientation="vertical"
-                android:paddingLeft="20dp">
+                android:paddingStart="20dp"
+                android:paddingEnd="0dp">
 
-                <CheckBox
+                <RadioButton
                     android:id="@+id/input_audience1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/audience_1" />
 
-                <CheckBox
+                <RadioButton
                     android:id="@+id/input_audience2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/audience_2" />
 
-                <CheckBox
+                <RadioButton
                     android:id="@+id/input_audience3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/audience_3" />
 
-                <CheckBox
+                <RadioButton
                     android:id="@+id/input_audience4"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -142,11 +186,12 @@
 
             <EditText
                 android:id="@+id/input_comment"
-                android:layout_width="344dp"
+                android:layout_width="374dp"
                 android:layout_height="111dp"
                 android:ems="10"
                 android:hint="@string/form_comment"
                 android:inputType="textMultiLine"
+                android:maxLength="1000"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:layout_editor_absoluteX="8dp"

@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -196,7 +197,7 @@ public class RecorderService extends Service {
         setRmsUpdateTime(rmsTime);
 
         FilterPlugin.filterProcessCreate(SAMPLERATE);
-        if(!saveFile){
+        if(!saveFile && Constants.calibrationType != CalibrationType.NOT_CALIBRATED){
             FilterPlugin.setFiltersFromPref(this, classType);
         } else {
             filterNumA = 0;
@@ -211,17 +212,28 @@ public class RecorderService extends Service {
         Log.d(LOG_TAG, "Created AudioRecord object's buffersize in Samples: " + recorder.getBufferSizeInFrames());
 //        Log.d(LOG_TAG, "Record_Buffersize: " + REC_BUFFERSIZE);
 
+        //save measure start time
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        String year = String.valueOf(calendar.get(java.util.Calendar.YEAR));
+        String month = String.valueOf(calendar.get(java.util.Calendar.MONTH) + 1);
+        String day = String.valueOf(calendar.get(java.util.Calendar.DAY_OF_MONTH));
+        String hour = String.valueOf(calendar.get(java.util.Calendar.HOUR_OF_DAY));
+        String minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
+        String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putString(Constants.FORM_TIME, year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            prefEditor.apply();
+        } else {
+            prefEditor.commit();
+        }
+
         FileOutputStream os;
         if (saveFile) {
             File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
             dir.mkdirs();
-            java.util.Calendar calendar = java.util.Calendar.getInstance();
-            String year = String.valueOf(calendar.get(java.util.Calendar.YEAR));
-            String month = String.valueOf(calendar.get(java.util.Calendar.MONTH) + 1);
-            String day = String.valueOf(calendar.get(java.util.Calendar.DAY_OF_MONTH));
-            String hour = String.valueOf(calendar.get(java.util.Calendar.HOUR_OF_DAY));
-            String minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
-            String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
+
+
             wavFile = new File(dir, Constants.deviceUniqueID + "_" + year + "_" + month + "_" + day + "_" + hour + "_" + minute + "_" + second + ".wav");
             infoFile = new File(dir, Constants.deviceUniqueID + "_info.txt");
             os = null;

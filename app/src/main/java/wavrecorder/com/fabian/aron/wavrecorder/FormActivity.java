@@ -5,12 +5,20 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
@@ -18,9 +26,13 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     TextView loudnessValueText;
     SeekBar eventLengthSeekBar;
     TextView eventLengthValueText;
-    SeekBar soundSystemSeekBar;
-    TextView soundSystemValueText;
     Button sendButton;
+    RadioGroup soundSysGroup;
+    RadioGroup targetAudGroup;
+    EditText typeText;
+    EditText locationText;
+    EditText distanceText;
+    EditText commentText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +45,14 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         eventLengthSeekBar = (SeekBar) findViewById(R.id.input_eventlength);
         eventLengthSeekBar.setOnSeekBarChangeListener(this);
         eventLengthValueText = (TextView) findViewById(R.id.text_eventlengthvalue);
-        soundSystemSeekBar = (SeekBar) findViewById(R.id.input_soundsystem);
-        soundSystemSeekBar.setOnSeekBarChangeListener(this);
-        soundSystemValueText = (TextView) findViewById(R.id.text_soundsystemvalue);
         sendButton = (Button) findViewById(R.id.button_formsend);
         sendButton.setOnClickListener(this);
-
+        soundSysGroup = (RadioGroup) findViewById(R.id.sound_system);
+        targetAudGroup = (RadioGroup) findViewById(R.id.target_audience);
+        typeText = (EditText) findViewById(R.id.input_type);
+        locationText = (EditText) findViewById(R.id.input_location);
+        distanceText = (EditText) findViewById(R.id.input_distance);
+        commentText = (EditText) findViewById(R.id.input_comment);
     }
 
     @Override
@@ -81,23 +95,8 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     default:
                 }
                 break;
-            case R.id.input_soundsystem:
-                switch(progress){
-                    case 0:
-                        soundSystemValueText.setText(R.string.soundsyssvalue_0);
-                        break;
-                    case 1:
-                        soundSystemValueText.setText(R.string.soundsyssvalue_1);
-                        break;
-                    case 2:
-                        soundSystemValueText.setText(R.string.soundsyssvalue_2);
-                        break;
-                    case 3:
-                        soundSystemValueText.setText(R.string.soundsyssvalue_3);
-                        break;
-                    default:
-                }
-                break;
+            default:
+
         }
 
 
@@ -134,11 +133,70 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     private void saveInputs() {
         //TODO bemeneti mezők elmentése sharedpreferences-be
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putString(Constants.FORM_TYPE,typeText.getText().toString());
+        prefEditor.putString(Constants.FORM_LOCATION,locationText.getText().toString());
+        prefEditor.putString(Constants.FORM_DISTANCE,distanceText.getText().toString());
+        prefEditor.putString(Constants.FORM_LOUDNESS,String.valueOf(loudnessSeekBar.getProgress()));
+        prefEditor.putString(Constants.FORM_EVENTLENGTH,String.valueOf(eventLengthSeekBar.getProgress()));
+        switch (soundSysGroup.getCheckedRadioButtonId()){
+            case R.id.soundsys_0:
+                prefEditor.putString(Constants.FORM_SOUNDSYS,"0");
+                break;
+            case R.id.soundsys_1:
+                prefEditor.putString(Constants.FORM_SOUNDSYS,"1");
+                break;
+            case R.id.soundsys_2:
+                prefEditor.putString(Constants.FORM_SOUNDSYS,"2");
+                break;
+            case R.id.soundsys_3:
+                prefEditor.putString(Constants.FORM_SOUNDSYS,"3");
+                break;
+            default:
+        }
+        switch (targetAudGroup.getCheckedRadioButtonId()){
+            case R.id.input_audience1:
+                prefEditor.putString(Constants.FORM_TARGETAUD,"0");
+                break;
+            case R.id.input_audience2:
+                prefEditor.putString(Constants.FORM_TARGETAUD,"1");
+                break;
+            case R.id.input_audience3:
+                prefEditor.putString(Constants.FORM_TARGETAUD,"2");
+                break;
+            case R.id.input_audience4:
+                prefEditor.putString(Constants.FORM_TARGETAUD,"3");
+                break;
+            default:
+        }
+        prefEditor.putString(Constants.FORM_COMMENT,commentText.getText().toString());
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            prefEditor.apply();
+        } else {
+            prefEditor.commit();
+        }
     }
 
     private boolean checkInputs() {
-        //TODO bementek ellenörzése: minden ki van-e töltve
-        return true;
+        //TODO check string's length
+        boolean result = true;
+        if(typeText.getText().toString().isEmpty()
+                || locationText.getText().toString().isEmpty()
+                || distanceText.getText().toString().isEmpty()){
+            result = false;
+
+        }
+        if(soundSysGroup.getCheckedRadioButtonId() == -1){
+            result = false;
+        }
+        if(targetAudGroup.getCheckedRadioButtonId() == -1){
+            result = false;
+        }
+        if(!result){
+            Toast.makeText(this,R.string.form_not_filled,Toast.LENGTH_LONG).show();
+        }
+        return result;
     }
 }

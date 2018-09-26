@@ -104,62 +104,63 @@ public class FilterPlugin {
         try {
             JSONObject classSelect;
             if (classType.equals(Constants.MEASUREMENT_CLASS.CLASS_ONE)) {
-                classSelect = new JSONObject(prefs.getString("classOneCalibData",null));
+                classSelect = new JSONObject(prefs.getString("classOneCalibData",""));
             } else {
-                classSelect = new JSONObject(prefs.getString("classTwoCalibData",null));
+                classSelect = new JSONObject(prefs.getString("classTwoCalibData",""));
             }
-            JSONObject weightingSelect = classSelect.getJSONObject("A_weighted");
-            JSONArray parametric = weightingSelect.getJSONArray("Parametric");
-            for (int i = 0; i < parametric.length(); i++) {
-                JSONObject f = parametric.getJSONObject(i);
-                RecorderService.filterNumA = addParametricFilterA(
-                        Float.valueOf(f.getString("fc")),
-                        Float.valueOf(f.getString("bandwidth")),
-                        Float.valueOf(f.getString("gain")));
-            }
-            JSONArray hpf = weightingSelect.getJSONArray("HPF");
-            for (int i = 0; i < hpf.length(); i++) {
-                JSONObject f = hpf.getJSONObject(i);
-                RecorderService.filterNumA = addResonantFilterA(
-                        0,
-                        Float.valueOf(f.getString("fc")),
-                        (float)(1.0 / Math.sqrt(2.0) / 10.0));
-            }
-            JSONArray lpf = weightingSelect.getJSONArray("LPF");
-            for (int i = 0; i < lpf.length(); i++) {
-                JSONObject f = lpf.getJSONObject(i);
-                RecorderService.filterNumA = addResonantFilterA(
-                        1,
-                        Float.valueOf(f.getString("fc")),
-                        (float)(1.0 / Math.sqrt(2.0) / 10.0));
-            }
+            if (!classSelect.toString().isEmpty()){
+                JSONObject weightingSelect = classSelect.getJSONObject("A_weighted");
+                JSONArray parametric = weightingSelect.getJSONArray("Parametric");
+                for (int i = 0; i < parametric.length(); i++) {
+                    JSONObject f = parametric.getJSONObject(i);
+                    RecorderService.filterNumA = addParametricFilterA(
+                            Float.valueOf(f.getString("fc")),
+                            Float.valueOf(f.getString("bandwidth")),
+                            Float.valueOf(f.getString("gain")));
+                }
+                JSONArray hpf = weightingSelect.getJSONArray("HPF");
+                for (int i = 0; i < hpf.length(); i++) {
+                    JSONObject f = hpf.getJSONObject(i);
+                    RecorderService.filterNumA = addResonantFilterA(
+                            0,
+                            Float.valueOf(f.getString("fc")),
+                            (float)(1.0 / Math.sqrt(2.0) / 10.0));
+                }
+                JSONArray lpf = weightingSelect.getJSONArray("LPF");
+                for (int i = 0; i < lpf.length(); i++) {
+                    JSONObject f = lpf.getJSONObject(i);
+                    RecorderService.filterNumA = addResonantFilterA(
+                            1,
+                            Float.valueOf(f.getString("fc")),
+                            (float)(1.0 / Math.sqrt(2.0) / 10.0));
+                }
 
-            weightingSelect = classSelect.getJSONObject("C_weighted");
-            parametric = weightingSelect.getJSONArray("Parametric");
-            for (int i = 0; i < parametric.length(); i++) {
-                JSONObject f = parametric.getJSONObject(i);
-                RecorderService.filterNumA = addParametricFilterC(
-                        Float.valueOf(f.getString("fc")),
-                        Float.valueOf(f.getString("bandwidth")),
-                        Float.valueOf(f.getString("gain")));
+                weightingSelect = classSelect.getJSONObject("C_weighted");
+                parametric = weightingSelect.getJSONArray("Parametric");
+                for (int i = 0; i < parametric.length(); i++) {
+                    JSONObject f = parametric.getJSONObject(i);
+                    RecorderService.filterNumA = addParametricFilterC(
+                            Float.valueOf(f.getString("fc")),
+                            Float.valueOf(f.getString("bandwidth")),
+                            Float.valueOf(f.getString("gain")));
+                }
+                hpf = weightingSelect.getJSONArray("HPF");
+                for (int i = 0; i < hpf.length(); i++) {
+                    JSONObject f = hpf.getJSONObject(i);
+                    RecorderService.filterNumA = addResonantFilterC(
+                            0,
+                            Float.valueOf(f.getString("fc")),
+                            (float)(1.0 / Math.sqrt(2.0) / 10.0));
+                }
+                lpf = weightingSelect.getJSONArray("LPF");
+                for (int i = 0; i < lpf.length(); i++) {
+                    JSONObject f = lpf.getJSONObject(i);
+                    RecorderService.filterNumA = addResonantFilterC(
+                            1,
+                            Float.valueOf(f.getString("fc")),
+                            (float)(1.0 / Math.sqrt(2.0) / 10.0));
+                }
             }
-            hpf = weightingSelect.getJSONArray("HPF");
-            for (int i = 0; i < hpf.length(); i++) {
-                JSONObject f = hpf.getJSONObject(i);
-                RecorderService.filterNumA = addResonantFilterC(
-                        0,
-                        Float.valueOf(f.getString("fc")),
-                        (float)(1.0 / Math.sqrt(2.0) / 10.0));
-            }
-            lpf = weightingSelect.getJSONArray("LPF");
-            for (int i = 0; i < lpf.length(); i++) {
-                JSONObject f = lpf.getJSONObject(i);
-                RecorderService.filterNumA = addResonantFilterC(
-                        1,
-                        Float.valueOf(f.getString("fc")),
-                        (float)(1.0 / Math.sqrt(2.0) / 10.0));
-            }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
