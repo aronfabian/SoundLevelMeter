@@ -18,11 +18,13 @@
         android:summary="@string/calc_time_sum"
         android:title="@string/calc_time_title" />
 
-    <!--<android.support.v7.preference.SwitchPreferenceCompat-->
-    <!--android:defaultValue="false"-->
-    <!--android:key="calibration"-->
-    <!--android:summary="@string/calib_sum"-->
-    <!--android:title="@string/calib_title" />-->
+    <Preference
+        android:key="calib_settings"
+        android:summary="@string/calib_summary"
+        android:title="@string/calibration">
+        <intent android:action="wavrecorder.com.fabian.aron.wavrecorder.CalibrationActivity" />
+    </Preference>
+    
     <PreferenceCategory
         android:summary="@string/table_settings_sum"
         android:title="@string/table_settings">
@@ -41,13 +43,6 @@
             android:title="@string/table_14_to_18" />
 
     </PreferenceCategory>
-
-    <Preference
-        android:key="calib_settings"
-        android:summary="@string/calib_summary"
-        android:title="@string/calibration">
-        <intent android:action="wavrecorder.com.fabian.aron.wavrecorder.CalibrationActivity" />
-    </Preference>
 
 
 </android.support.v7.preference.PreferenceScreen>
