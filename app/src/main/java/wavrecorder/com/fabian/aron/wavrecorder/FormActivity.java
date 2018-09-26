@@ -10,10 +10,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.SeekBar;
@@ -57,9 +55,9 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        switch(seekBar.getId()){
+        switch (seekBar.getId()) {
             case R.id.input_loudness:
-                switch(progress){
+                switch (progress) {
                     case 0:
                         loudnessValueText.setText(R.string.loudnessvalue_0);
                         break;
@@ -76,7 +74,7 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                 }
                 break;
             case R.id.input_eventlength:
-                switch(progress){
+                switch (progress) {
                     case 0:
                         eventLengthValueText.setText(R.string.eventlengthsvalue_0);
                         break;
@@ -114,9 +112,9 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.button_formsend:
-                if(checkInputs()){
+                if (checkInputs()) {
                     saveInputs();
                     JobScheduler jobScheduler =
                             (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
@@ -135,42 +133,42 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         //TODO bemeneti mezők elmentése sharedpreferences-be
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefEditor = prefs.edit();
-        prefEditor.putString(Constants.FORM_TYPE,typeText.getText().toString());
-        prefEditor.putString(Constants.FORM_LOCATION,locationText.getText().toString());
-        prefEditor.putString(Constants.FORM_DISTANCE,distanceText.getText().toString());
-        prefEditor.putString(Constants.FORM_LOUDNESS,String.valueOf(loudnessSeekBar.getProgress()));
-        prefEditor.putString(Constants.FORM_EVENTLENGTH,String.valueOf(eventLengthSeekBar.getProgress()));
-        switch (soundSysGroup.getCheckedRadioButtonId()){
+        prefEditor.putString(Constants.FORM_TYPE, typeText.getText().toString());
+        prefEditor.putString(Constants.FORM_LOCATION, locationText.getText().toString());
+        prefEditor.putString(Constants.FORM_DISTANCE, distanceText.getText().toString());
+        prefEditor.putString(Constants.FORM_LOUDNESS, String.valueOf(loudnessSeekBar.getProgress()));
+        prefEditor.putString(Constants.FORM_EVENTLENGTH, String.valueOf(eventLengthSeekBar.getProgress()));
+        switch (soundSysGroup.getCheckedRadioButtonId()) {
             case R.id.soundsys_0:
-                prefEditor.putString(Constants.FORM_SOUNDSYS,"0");
+                prefEditor.putString(Constants.FORM_SOUNDSYS, "0");
                 break;
             case R.id.soundsys_1:
-                prefEditor.putString(Constants.FORM_SOUNDSYS,"1");
+                prefEditor.putString(Constants.FORM_SOUNDSYS, "1");
                 break;
             case R.id.soundsys_2:
-                prefEditor.putString(Constants.FORM_SOUNDSYS,"2");
+                prefEditor.putString(Constants.FORM_SOUNDSYS, "2");
                 break;
             case R.id.soundsys_3:
-                prefEditor.putString(Constants.FORM_SOUNDSYS,"3");
+                prefEditor.putString(Constants.FORM_SOUNDSYS, "3");
                 break;
             default:
         }
-        switch (targetAudGroup.getCheckedRadioButtonId()){
+        switch (targetAudGroup.getCheckedRadioButtonId()) {
             case R.id.input_audience1:
-                prefEditor.putString(Constants.FORM_TARGETAUD,"0");
+                prefEditor.putString(Constants.FORM_TARGETAUD, "0");
                 break;
             case R.id.input_audience2:
-                prefEditor.putString(Constants.FORM_TARGETAUD,"1");
+                prefEditor.putString(Constants.FORM_TARGETAUD, "1");
                 break;
             case R.id.input_audience3:
-                prefEditor.putString(Constants.FORM_TARGETAUD,"2");
+                prefEditor.putString(Constants.FORM_TARGETAUD, "2");
                 break;
             case R.id.input_audience4:
-                prefEditor.putString(Constants.FORM_TARGETAUD,"3");
+                prefEditor.putString(Constants.FORM_TARGETAUD, "3");
                 break;
             default:
         }
-        prefEditor.putString(Constants.FORM_COMMENT,commentText.getText().toString());
+        prefEditor.putString(Constants.FORM_COMMENT, commentText.getText().toString());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             prefEditor.apply();
@@ -182,20 +180,20 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
     private boolean checkInputs() {
         //TODO check string's length
         boolean result = true;
-        if(typeText.getText().toString().isEmpty()
+        if (typeText.getText().toString().isEmpty()
                 || locationText.getText().toString().isEmpty()
-                || distanceText.getText().toString().isEmpty()){
+                || distanceText.getText().toString().isEmpty()) {
             result = false;
 
         }
-        if(soundSysGroup.getCheckedRadioButtonId() == -1){
+        if (soundSysGroup.getCheckedRadioButtonId() == -1) {
             result = false;
         }
-        if(targetAudGroup.getCheckedRadioButtonId() == -1){
+        if (targetAudGroup.getCheckedRadioButtonId() == -1) {
             result = false;
         }
-        if(!result){
-            Toast.makeText(this,R.string.form_not_filled,Toast.LENGTH_LONG).show();
+        if (!result) {
+            Toast.makeText(this, R.string.form_not_filled, Toast.LENGTH_LONG).show();
         }
         return result;
     }

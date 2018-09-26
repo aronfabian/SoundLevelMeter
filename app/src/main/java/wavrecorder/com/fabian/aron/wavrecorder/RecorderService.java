@@ -5,9 +5,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -274,9 +271,9 @@ public class RecorderService extends Service {
                             nSamplesRead = recorder.read(buffer, 0, buffer.length);
                             tsLong2 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
                             dtsLong = (tsLong2 - tsLong1) / 1000000;
-                            Log.d(LOG_TAG, "Buffer pos = " + Integer.toString(bBufferPosInSamples));
-                            Log.d(LOG_TAG, Integer.toString(nSamplesRead) + " samples read.");
-                            Log.d(LOG_TAG, "Wait time for read: " + dtsLong.toString() + " milli seconds");
+//                            Log.d(LOG_TAG, "Buffer pos = " + Integer.toString(bBufferPosInSamples));
+//                            Log.d(LOG_TAG, Integer.toString(nSamplesRead) + " samples read.");
+//                            Log.d(LOG_TAG, "Wait time for read: " + dtsLong.toString() + " milli seconds");
                             floats = shortToFloat(buffer);
                             if (filterNumC != 0) {
                                 FilterPlugin.filterProcessingC(floats, floatsC, nSamplesRead);

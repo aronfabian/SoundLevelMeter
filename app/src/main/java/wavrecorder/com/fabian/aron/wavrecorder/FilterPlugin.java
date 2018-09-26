@@ -2,7 +2,6 @@ package wavrecorder.com.fabian.aron.wavrecorder;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
 
 import org.json.JSONArray;
@@ -104,11 +103,11 @@ public class FilterPlugin {
         try {
             JSONObject classSelect;
             if (classType.equals(Constants.MEASUREMENT_CLASS.CLASS_ONE)) {
-                classSelect = new JSONObject(prefs.getString("classOneCalibData",""));
+                classSelect = new JSONObject(prefs.getString("classOneCalibData", ""));
             } else {
-                classSelect = new JSONObject(prefs.getString("classTwoCalibData",""));
+                classSelect = new JSONObject(prefs.getString("classTwoCalibData", ""));
             }
-            if (!classSelect.toString().isEmpty()){
+            if (!classSelect.toString().isEmpty()) {
                 JSONObject weightingSelect = classSelect.getJSONObject("A_weighted");
                 JSONArray parametric = weightingSelect.getJSONArray("Parametric");
                 for (int i = 0; i < parametric.length(); i++) {
@@ -124,7 +123,7 @@ public class FilterPlugin {
                     RecorderService.filterNumA = addResonantFilterA(
                             0,
                             Float.valueOf(f.getString("fc")),
-                            (float)(1.0 / Math.sqrt(2.0) / 10.0));
+                            (float) (1.0 / Math.sqrt(2.0) / 10.0));
                 }
                 JSONArray lpf = weightingSelect.getJSONArray("LPF");
                 for (int i = 0; i < lpf.length(); i++) {
@@ -132,7 +131,7 @@ public class FilterPlugin {
                     RecorderService.filterNumA = addResonantFilterA(
                             1,
                             Float.valueOf(f.getString("fc")),
-                            (float)(1.0 / Math.sqrt(2.0) / 10.0));
+                            (float) (1.0 / Math.sqrt(2.0) / 10.0));
                 }
 
                 weightingSelect = classSelect.getJSONObject("C_weighted");
@@ -150,7 +149,7 @@ public class FilterPlugin {
                     RecorderService.filterNumA = addResonantFilterC(
                             0,
                             Float.valueOf(f.getString("fc")),
-                            (float)(1.0 / Math.sqrt(2.0) / 10.0));
+                            (float) (1.0 / Math.sqrt(2.0) / 10.0));
                 }
                 lpf = weightingSelect.getJSONArray("LPF");
                 for (int i = 0; i < lpf.length(); i++) {
@@ -158,7 +157,7 @@ public class FilterPlugin {
                     RecorderService.filterNumA = addResonantFilterC(
                             1,
                             Float.valueOf(f.getString("fc")),
-                            (float)(1.0 / Math.sqrt(2.0) / 10.0));
+                            (float) (1.0 / Math.sqrt(2.0) / 10.0));
                 }
             }
         } catch (JSONException e) {

@@ -3,44 +3,50 @@
 
 
     <ListPreference
+        android:defaultValue="1"
         android:entries="@array/list_class"
         android:entryValues="@array/list_classvalues"
-        android:defaultValue="1"
         android:key="class_type"
         android:summary="@string/meas_acc_sum"
         android:title="@string/meas_acc_title" />
 
     <ListPreference
+        android:defaultValue="sec"
         android:entries="@array/list_rms"
         android:entryValues="@array/list_rmsvalues"
-        android:defaultValue="sec"
         android:key="rms_time"
         android:summary="@string/calc_time_sum"
         android:title="@string/calc_time_title" />
 
     <!--<android.support.v7.preference.SwitchPreferenceCompat-->
-        <!--android:defaultValue="false"-->
-        <!--android:key="calibration"-->
-        <!--android:summary="@string/calib_sum"-->
-        <!--android:title="@string/calib_title" />-->
-    <CheckBoxPreference
-        android:key="u3"
-        android:title="@string/table_under3"
-        android:defaultValue="true" />
-    <CheckBoxPreference
-        android:key="b314"
-        android:title="@string/table_3_to_14"
-        android:defaultValue="true" />
-    <CheckBoxPreference
-        android:key="b1418"
-        android:title="@string/table_14_to_18"
-        android:defaultValue="true" />
+    <!--android:defaultValue="false"-->
+    <!--android:key="calibration"-->
+    <!--android:summary="@string/calib_sum"-->
+    <!--android:title="@string/calib_title" />-->
+    <PreferenceCategory
+        android:summary="@string/table_settings_sum"
+        android:title="@string/table_settings">
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="u3"
+            android:title="@string/table_under3" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="b314"
+            android:title="@string/table_3_to_14" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="b1418"
+            android:title="@string/table_14_to_18" />
+
+    </PreferenceCategory>
 
     <Preference
         android:key="calib_settings"
         android:summary="@string/calib_summary"
         android:title="@string/calibration">
-        <intent android:action="wavrecorder.com.fabian.aron.wavrecorder.CalibrationActivity"/>
+        <intent android:action="wavrecorder.com.fabian.aron.wavrecorder.CalibrationActivity" />
     </Preference>
 
 

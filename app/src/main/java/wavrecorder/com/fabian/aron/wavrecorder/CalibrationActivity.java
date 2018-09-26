@@ -29,7 +29,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileFilter;
 
-
 import permissions.dispatcher.NeedsPermission;
 import permissions.dispatcher.RuntimePermissions;
 
