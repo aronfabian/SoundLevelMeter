@@ -7,14 +7,18 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.constraint.Group;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,10 +28,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import permissions.dispatcher.NeedsPermission;
@@ -39,12 +46,17 @@ import permissions.dispatcher.RuntimePermissions;
 @RuntimePermissions
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private PhoneDB db;
+
     private final MainActivity target = this;
     private ProgressBar progressBar;
     private TextView dBAText;
     private TextView dBCText;
     private TextView lAeqText;
+    private TextView u3Text;
+    private TextView b314Text;
+    private TextView b1418Text;
+    private EditText timeText;
+
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
     @Override
@@ -56,15 +68,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startButton.setOnClickListener(this);
         stopButton.setOnClickListener(this);
 
-
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         dBAText = (TextView) findViewById(R.id.text_dba);
         dBCText = (TextView) findViewById(R.id.text_dbc);
         lAeqText = (TextView) findViewById(R.id.text_laeq);
-
-
+        u3Text = (TextView) findViewById(R.id.text_u3_recom);
+        b314Text = (TextView) findViewById(R.id.text_3_14_recom);
+        b1418Text = (TextView) findViewById(R.id.text_14_18_recom);
+        timeText = (EditText) findViewById(R.id.text_time);
+        timeText.setFocusable(false);
         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(this);
-
     }
 
     @Override
@@ -86,8 +99,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
     public void getPhoneInfo() {
-        db = new PhoneDB(this);
-        DeviceName.with(this).request(new DeviceName.Callback() {
+          DeviceName.with(this).request(new DeviceName.Callback() {
             @Override
             public void onFinished(DeviceName.DeviceInfo info, Exception error) {
                 Constants.deviceModel = info.model;
@@ -97,8 +109,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Constants.deviceMarketName = info.manufacturer + " " + info.marketName;
                 }
                 Constants.deviceUniqueID = getDeviceIMEI();
-                TextView calibText = (TextView) findViewById(R.id.text_calib);
-                calibText.setText(db.getCalibType(Build.MODEL, Constants.deviceUniqueID, Constants.deviceMarketName));
+
                 if ((info.marketName.equals(Build.MODEL)) && !isOnline()) {
                     moreDeviceInfo();
                 }
@@ -122,6 +133,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
+
+    List<String> LAeqHistory = new ArrayList<>();
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -144,19 +157,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     break;
                 case Constants.ACTION.LAEQ_BROADCAST_ACTION:
                     double lAeq = intent.getDoubleExtra("LAeq", 0);
-                    lAeqText.setText("LAeq: " + (int) lAeq + "dB");
+                    lAeqText.setText(String.format("LAeq: %.1fdB",lAeq));
+                    //lAeqText.setText("LAeq: " + (int) lAeq + "dB");
+                    LAeqHistory.add(String.format("%.1f",lAeq));
+                    setRecommendationTexts(lAeq);
+                    int measLengthSec = intent.getIntExtra("measLength",0);
+                    int min = measLengthSec / 60;
+                    int sec = measLengthSec - (min*60);
+                    int h = min / 60;
+                    min = min - (h*60);
+                    timeText.setText(String.format("%02d:%02d:%02d",h,min,sec));
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                     if (isOnline()) {
                         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(target);
-//                        if (RecorderService.isAlive) {
-//                            new AlertDialog.Builder(target)
-//                                    .setCancelable(true)
-//                                    .setMessage(R.string.update_info)
-//                                    .show();
-//
-//                        }
                     }
+                    break;
+                case Constants.ACTION.RECORDERSTOPPED_ACTION:
+                    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                    SharedPreferences.Editor prefEditor = prefs.edit();
+                    prefEditor.putString(Constants.LAEQ_HISTORY,LAeqHistory.toString());
+                    int spl_rms = 0;
+                    if (LAeqHistory.size() > 0){
+                        float f = Float.valueOf(LAeqHistory.get(LAeqHistory.size()-1).replace(",","."));
+                        if (Float.isNaN(f) || Float.isInfinite(f)){
+                            spl_rms = 0;
+                        } else {
+                            spl_rms = Math.round(f);
+                        }
+                    }
+                    Log.d("spl_rms",String.valueOf(spl_rms));
+                    prefEditor.putString(Constants.LAEQ_LAST,String.valueOf(spl_rms));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+                        prefEditor.apply();
+                    } else {
+                        prefEditor.commit();
+                    }
+                    LAeqHistory.clear();
+                    Intent formIntent = new Intent(context, FormActivity.class);
+                    startActivity(formIntent);
                     break;
                 default:
                     break;
@@ -164,6 +203,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
+
+    private void setRecommendationTexts(double lAeq) {
+        if(lAeq <= 75){
+            u3Text.setText(R.string.table_no_limit);
+            b314Text.setText(R.string.table_no_limit);
+            b1418Text.setText(R.string.table_no_limit);
+            lAeqText.setBackgroundColor(Color.GREEN);
+        }
+        if(lAeq > 75 && lAeq <= 80){
+            u3Text.setText(R.string.table_notrecomm);
+            b314Text.setText(R.string.table_max_2);
+            b1418Text.setText(R.string.table_no_limit);
+            lAeqText.setBackgroundColor(Color.YELLOW);
+        }
+        if(lAeq > 80 && lAeq <= 85){
+            u3Text.setText(R.string.table_notrecomm);
+            b314Text.setText(R.string.table_max_45);
+            b1418Text.setText(R.string.table_no_limit);
+            lAeqText.setBackgroundColor(Color.RED);
+        }
+        if(lAeq > 85 && lAeq <= 90){
+            u3Text.setText(R.string.table_notrecomm);
+            b314Text.setText(R.string.table_notrecomm);
+            b1418Text.setText(R.string.table_max_2);
+        }
+        if(lAeq > 90 && lAeq <= 95){
+            u3Text.setText(R.string.table_notrecomm);
+            b314Text.setText(R.string.table_notrecomm);
+            b1418Text.setText(R.string.table_max_45);
+        }
+        if(lAeq > 95){
+            u3Text.setText(R.string.table_notrecomm);
+            b314Text.setText(R.string.table_notrecomm);
+            b1418Text.setText(R.string.table_notrecomm);
+        }
+    }
 
 
     @Override
@@ -197,7 +272,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         filter.addAction(Constants.ACTION.DBA_DBC_BROADCAST_ACTION);
         filter.addAction(Constants.ACTION.LAEQ_BROADCAST_ACTION);
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+        filter.addAction(Constants.ACTION.RECORDERSTOPPED_ACTION);
         registerReceiver(broadcastReceiver, filter);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        Group u3Group = (Group) findViewById(R.id.group_u3);
+        Group b314Group = (Group) findViewById(R.id.group_3_14);
+        Group b1418Group = (Group) findViewById(R.id.group_14_18);
+
+        if(prefs.getBoolean("u3",true)){
+            u3Group.setVisibility(View.VISIBLE);
+        } else {
+            u3Group.setVisibility(View.GONE);
+        }
+        if(prefs.getBoolean("b314",true)){
+            b314Group.setVisibility(View.VISIBLE);
+        } else {
+            b314Group.setVisibility(View.GONE);
+        }
+        if(prefs.getBoolean("b1418",true)){
+            b1418Group.setVisibility(View.VISIBLE);
+        }else {
+            b1418Group.setVisibility(View.GONE);
+        }
+        String calibPref = prefs.getString(Constants.CALIBTYPE,CalibrationType.NOT_CALIBRATED.toString());
+        Constants.calibrationType = CalibrationType.valueOf(calibPref);
+        TextView calibText = (TextView) findViewById(R.id.text_calib);
+        switch(Constants.calibrationType){
+            case NOT_CALIBRATED:
+                calibText.setText(R.string.not_calib);
+                break;
+            case MODELLY_CALIBRATED:
+                calibText.setText(R.string.model_calib);
+                break;
+            case UNIQUELY_CALIBRATED:
+                calibText.setText(R.string.uniq_calib);
+                break;
+        }
 
     }
 

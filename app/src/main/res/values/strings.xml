@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WavRecorder2</string>
+    <string name="app_name">WavRecorder</string>
     <string name="notification_title">WavRecorder</string>
     <string name="notification_message">Recording</string>
     <string name="ticker_text">WavRecorder</string>
@@ -22,4 +22,54 @@
     <string name="download_btn">Download</string>
     <string name="calibration">Calibration</string>
     <string name="calib_summary">Calibration of the mobile phone\'s microphone.</string>
+    <string name="table_category">Category of noise level</string>
+    <string name="table_db">Guidance value LAeq,M30 dB</string>
+    <string name="table_recomm">Hearing protection recommendations</string>
+    <string name="table_under3">Under 3 years:</string>
+    <string name="table_3_to_14">Between 3 and 14 years:</string>
+    <string name="table_14_to_18">Between 14 and 18 years:</string>
+    <string name="table_no_limit">No limitations</string>
+    <string name="table_notrecomm">Not recommended</string>
+    <string name="table_max_2">Up to 2 hours stay</string>
+    <string name="table_max_45">Up to 45 minutes stay</string>
+    <string name="overdrive">Overdrive!</string>
+    <string name="age_table">Age groups</string>
+    <string name="age_table_summary">Select which age groups you want to be visible.</string>
+    <string name="form_type">Event type, e.g. concert</string>
+    <string name="form_location">Location</string>
+    <string name="form_distance">Distance from sound system in meter</string>
+    <string name="form_loudness">Loudness</string>
+    <string name="form_comment">Comment</string>
+    <string name="form_targetaudince">Target audience</string>
+    <string name="form_soundsystem">Sound system type</string>
+    <string name="form_eventlength">Event length</string>
+    <string name="audience_1">Kindergarteners</string>
+    <string name="audience_2">Elementary school children</string>
+    <string name="audience_3">High school children</string>
+    <string name="audience_4">Adults</string>
+    <string name="loudnessvalue_0">Silent</string>
+    <string name="loudnessvalue_1">Normal</string>
+    <string name="loudnessvalue_2">Loud</string>
+    <string name="loudnessvalue_3">Very loud</string>
+    <string name="eventlengthsvalue_0">Not known</string>
+    <string name="eventlengthsvalue_1">&lt; 1 hour</string>
+    <string name="eventlengthsvalue_2">1&#8212;2 hour</string>
+    <string name="eventlengthsvalue_3">2&#8212;4 hour</string>
+    <string name="eventlengthsvalue_4">4 hour &lt;</string>
+    <string name="soundsyssvalue_0">Don\'t know</string>
+    <string name="soundsyssvalue_1">Line array</string>
+    <string name="soundsyssvalue_2">1&#8212;1 (great) speaker</string>
+    <string name="soundsyssvalue_3">Many small speakers</string>
+    <string name="form_not_filled">Please fill all the fields!</string>
+    <string name="settings">Settings</string>
+    <string name="not_calib">Not Calibrated</string>
+    <string name="model_calib">Modelly Calibrated</string>
+    <string name="uniq_calib">Uniquely Calibrated</string>
+    <string name="table_settings_sum">Select viewable age groups</string>
+    <string name="table_settings">Viewable age groups</string>
+
+
+
+
+
 </resources>

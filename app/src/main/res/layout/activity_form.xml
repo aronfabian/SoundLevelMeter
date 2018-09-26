@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/input_type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/form_type"
+                android:inputType="text"
+                android:maxLength="100" />
+
+            <EditText
+                android:id="@+id/input_location"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/form_location"
+                android:inputType="text"
+                android:maxLength="100" />
+
+            <EditText
+                android:id="@+id/input_distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:ems="10"
+                android:hint="@string/form_distance"
+                android:inputType="numberDecimal"
+                android:maxLength="4" />
+
+            <TextView
+                android:id="@+id/text_loudness"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/form_loudness"
+                android:textSize="18sp" />
+
+            <SeekBar
+                android:id="@+id/input_loudness"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="3"
+                android:progress="1" />
+
+            <TextView
+                android:id="@+id/text_loudnesvalue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/loudnessvalue_1"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/text_eventlength"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/form_eventlength"
+                android:textSize="18sp" />
+
+            <SeekBar
+                android:id="@+id/input_eventlength"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="4"
+                android:progress="3" />
+
+            <TextView
+                android:id="@+id/text_eventlengthvalue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:text="@string/eventlengthsvalue_3"
+                android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/text_soundsystem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/form_soundsystem"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/sound_system"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:paddingStart="20dp"
+                android:paddingEnd="0dp">
+
+                <RadioButton
+                    android:id="@+id/soundsys_0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/soundsyssvalue_0" />
+
+                <RadioButton
+                    android:id="@+id/soundsys_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/soundsyssvalue_1" />
+
+                <RadioButton
+                    android:id="@+id/soundsys_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/soundsyssvalue_2" />
+
+                <RadioButton
+                    android:id="@+id/soundsys_3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/soundsyssvalue_3" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/text_targetaudience"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/form_targetaudince"
+                android:textSize="18sp" />
+
+            <RadioGroup
+                android:id="@+id/target_audience"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="5dp"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingEnd="0dp">
+
+                <RadioButton
+                    android:id="@+id/input_audience1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/audience_1" />
+
+                <RadioButton
+                    android:id="@+id/input_audience2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/audience_2" />
+
+                <RadioButton
+                    android:id="@+id/input_audience3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/audience_3" />
+
+                <RadioButton
+                    android:id="@+id/input_audience4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/audience_4" />
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/input_comment"
+                android:layout_width="374dp"
+                android:layout_height="111dp"
+                android:ems="10"
+                android:hint="@string/form_comment"
+                android:inputType="textMultiLine"
+                android:maxLength="1000"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteX="8dp"
+                tools:layout_editor_absoluteY="365dp" />
+
+            <Button
+                android:id="@+id/button_formsend"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/send_btn" />
+
+        </LinearLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

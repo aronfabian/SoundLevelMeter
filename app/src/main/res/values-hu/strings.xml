@@ -23,5 +23,55 @@
     <string name="download_btn">Letöltés</string>
     <string name="calibration">Kalibráció</string>
     <string name="calib_summary">A telefon mikrofonjának kalibrálása.</string>
+    <string name="table_category">Zajszint kategória-jel</string>
+    <string name="table_db">Irányérték LAeq,M30 dB</string>
+    <string name="table_recomm">Hallásvédelem szempontjából tett ajánlások</string>
+    <string name="table_under3">3 évesnél fiatalabb:</string>
+    <string name="table_3_to_14">3&#8212;14 év között:</string>
+    <string name="table_14_to_18">14&#8212;18 év között:</string>
+    <string name="table_no_limit">Nincs korlátozás</string>
+    <string name="table_notrecomm">Nem ajánlott</string>
+    <string name="table_max_2">Legfeljebb 2 óra tartózkodás</string>
+    <string name="table_max_45">Legfeljebb 45 perc tartózkodás</string>
+    <string name="overdrive">Túlvezérlés!</string>
+    <string name="age_table">Korcsoportok</string>
+    <string name="age_table_summary">Válassza ki, hogy mely korcsoportokat szeretné látni.</string>
+    <string name="form_type">Rendezvény típus, pl.: koncert</string>
+    <string name="form_location">Helyszín</string>
+    <string name="form_distance">Távolásg a hangrendszertől méterben</string>
+    <string name="form_loudness">Hangosságérzet</string>
+    <string name="form_comment">Hozzászólás</string>
+    <string name="form_targetaudince">Közönség célcsoport</string>
+    <string name="form_soundsystem">Hangrendszer típus</string>
+    <string name="form_eventlength">Rendezvény hossza</string>
+    <string name="audience_1">Óvodások</string>
+    <string name="audience_2">Kisiskolások</string>
+    <string name="audience_3">Középiskolások</string>
+    <string name="audience_4">Nagykorúak</string>
+    <string name="loudnessvalue_0">Halk</string>
+    <string name="loudnessvalue_1">Normális</string>
+    <string name="loudnessvalue_2">Hangos</string>
+    <string name="loudnessvalue_3">Nagyon hangos</string>
+    <string name="eventlengthsvalue_0">Értelmezhetetlen/nem tudom</string>
+    <string name="eventlengthsvalue_1">&lt; 1 óra</string>
+    <string name="eventlengthsvalue_2">1&#8212;2 óra</string>
+    <string name="eventlengthsvalue_3">2&#8212;4 óra</string>
+    <string name="eventlengthsvalue_4">4 óra &lt;</string>
+    <string name="soundsyssvalue_0">Nem tudom</string>
+    <string name="soundsyssvalue_1">Line array</string>
+    <string name="soundsyssvalue_2">1&#8212;1 (nagy) hangsugárzó</string>
+    <string name="soundsyssvalue_3">Sok kicsi hangsugárzó</string>
+    <string name="form_not_filled">Kérlek, töltsd ki az összes mezőt!</string>
+    <string name="settings">Beállítások</string>
+    <string name="not_calib">Nem kalibrált</string>
+    <string name="model_calib">Modell kalibrált</string>
+    <string name="uniq_calib">Egyedileg kalibrált</string>
+    <string name="table_settings_sum">Válaszd ki a látható koroszályokat</string>
+    <string name="table_settings">Látható korosztályok</string>
+
+
+
+
+
 
 </resources>

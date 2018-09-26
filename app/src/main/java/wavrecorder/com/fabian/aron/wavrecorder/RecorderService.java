@@ -5,15 +5,13 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.job.JobInfo;
-import android.app.job.JobScheduler;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
@@ -167,14 +165,9 @@ public class RecorderService extends Service {
 
                     Log.i(LOG_TAG, "Received Stop Foreground Intent");
                     stopForeground(true);
+                    Intent stopIntent = new Intent(Constants.ACTION.RECORDERSTOPPED_ACTION);
+                    sendBroadcast(stopIntent);
                     mNotificationManager.cancel(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE);
-                    JobScheduler jobScheduler =
-                            (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                    jobScheduler.schedule(new JobInfo.Builder(4,
-                            new ComponentName(this, UploadJobService.class))
-                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_NOT_ROAMING)
-                            .setRequiresCharging(false)
-                            .build());
                     stopSelf();
                 }
             }
@@ -200,8 +193,11 @@ public class RecorderService extends Service {
         setRmsUpdateTime(rmsTime);
 
         FilterPlugin.filterProcessCreate(SAMPLERATE);
-        if(!saveFile){
-            FilterPlugin.setFilters(this, classType);
+        if(!saveFile && Constants.calibrationType != CalibrationType.NOT_CALIBRATED){
+            FilterPlugin.setFiltersFromPref(this, classType);
+        } else {
+            filterNumA = 0;
+            filterNumC = 0;
         }
         //FilterPlugin.addParametricFilterA(1000, 1, -20);
         //FilterPlugin.addResonantFilterA(Constants.HPF, 4000, (float) (1.0 / Math.sqrt(2.0) / 10.0)); // resonance = Q/10; Q is lin gain at cut-off frequency
@@ -212,17 +208,28 @@ public class RecorderService extends Service {
         Log.d(LOG_TAG, "Created AudioRecord object's buffersize in Samples: " + recorder.getBufferSizeInFrames());
 //        Log.d(LOG_TAG, "Record_Buffersize: " + REC_BUFFERSIZE);
 
+        //save measure start time
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        String year = String.valueOf(calendar.get(java.util.Calendar.YEAR));
+        String month = String.valueOf(calendar.get(java.util.Calendar.MONTH) + 1);
+        String day = String.valueOf(calendar.get(java.util.Calendar.DAY_OF_MONTH));
+        String hour = String.valueOf(calendar.get(java.util.Calendar.HOUR_OF_DAY));
+        String minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
+        String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
+        SharedPreferences.Editor prefEditor = prefs.edit();
+        prefEditor.putString(Constants.FORM_TIME, year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
+            prefEditor.apply();
+        } else {
+            prefEditor.commit();
+        }
+
         FileOutputStream os;
         if (saveFile) {
             File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
             dir.mkdirs();
-            java.util.Calendar calendar = java.util.Calendar.getInstance();
-            String year = String.valueOf(calendar.get(java.util.Calendar.YEAR));
-            String month = String.valueOf(calendar.get(java.util.Calendar.MONTH) + 1);
-            String day = String.valueOf(calendar.get(java.util.Calendar.DAY_OF_MONTH));
-            String hour = String.valueOf(calendar.get(java.util.Calendar.HOUR_OF_DAY));
-            String minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
-            String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
+
+
             wavFile = new File(dir, Constants.deviceUniqueID + "_" + year + "_" + month + "_" + day + "_" + hour + "_" + minute + "_" + second + ".wav");
             infoFile = new File(dir, Constants.deviceUniqueID + "_info.txt");
             os = null;
@@ -264,9 +271,9 @@ public class RecorderService extends Service {
                             nSamplesRead = recorder.read(buffer, 0, buffer.length);
                             tsLong2 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
                             dtsLong = (tsLong2 - tsLong1) / 1000000;
-                            Log.d(LOG_TAG, "Buffer pos = " + Integer.toString(bBufferPosInSamples));
-                            Log.d(LOG_TAG, Integer.toString(nSamplesRead) + " samples read.");
-                            Log.d(LOG_TAG, "Wait time for read: " + dtsLong.toString() + " milli seconds");
+//                            Log.d(LOG_TAG, "Buffer pos = " + Integer.toString(bBufferPosInSamples));
+//                            Log.d(LOG_TAG, Integer.toString(nSamplesRead) + " samples read.");
+//                            Log.d(LOG_TAG, "Wait time for read: " + dtsLong.toString() + " milli seconds");
                             floats = shortToFloat(buffer);
                             if (filterNumC != 0) {
                                 FilterPlugin.filterProcessingC(floats, floatsC, nSamplesRead);
@@ -409,6 +416,7 @@ public class RecorderService extends Service {
                             secCount = 0;
                             lAeq = (10 * Math.log10((double) sumRmsSquareA / measLength / dBBase)) + offset;
                             meanIntent.putExtra("LAeq", lAeq);
+                            meanIntent.putExtra("measLength",measLength);
                             sendBroadcast(meanIntent);
                         }
 
