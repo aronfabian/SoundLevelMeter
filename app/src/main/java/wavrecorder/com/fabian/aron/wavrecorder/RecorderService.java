@@ -169,7 +169,6 @@ public class RecorderService extends Service {
                     Log.i(LOG_TAG, "Received Stop Foreground Intent");
                     stopForeground(true);
                     Intent stopIntent = new Intent(Constants.ACTION.RECORDERSTOPPED_ACTION);
-                    stopIntent.putExtra("recorderStopped", true);
                     sendBroadcast(stopIntent);
                     mNotificationManager.cancel(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE);
                     stopSelf();

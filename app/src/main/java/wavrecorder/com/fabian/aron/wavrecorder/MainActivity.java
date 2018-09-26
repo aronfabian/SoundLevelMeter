@@ -54,7 +54,7 @@ import permissions.dispatcher.RuntimePermissions;
 @RuntimePermissions
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private PhoneDB db;
+
     private final MainActivity target = this;
     private ProgressBar progressBar;
     private TextView dBAText;
@@ -107,8 +107,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
     public void getPhoneInfo() {
-        db = new PhoneDB(this);
-        DeviceName.with(this).request(new DeviceName.Callback() {
+          DeviceName.with(this).request(new DeviceName.Callback() {
             @Override
             public void onFinished(DeviceName.DeviceInfo info, Exception error) {
                 Constants.deviceModel = info.model;
@@ -186,7 +185,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor prefEditor = prefs.edit();
                     prefEditor.putString(Constants.LAEQ_HISTORY,LAeqHistory.toString());
-                    int spl_rms = Math.round(Float.valueOf(LAeqHistory.get(LAeqHistory.size()-1)));
+                    int spl_rms = 0;
+                    if (LAeqHistory.size() > 0){
+                        float f = Float.valueOf(LAeqHistory.get(LAeqHistory.size()-1).replace(",","."));
+                        if (Float.isNaN(f) || Float.isInfinite(f)){
+                            spl_rms = 0;
+                        } else {
+                            spl_rms = Math.round(f);
+                        }
+                    }
                     Log.d("spl_rms",String.valueOf(spl_rms));
                     prefEditor.putString(Constants.LAEQ_LAST,String.valueOf(spl_rms));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
