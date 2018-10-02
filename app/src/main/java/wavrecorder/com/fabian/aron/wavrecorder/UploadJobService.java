@@ -49,7 +49,7 @@ public class UploadJobService extends JobService {
             @Override
             protected Map<String, String> getParams() {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                Map<String, String> params = new HashMap<String, String>();
+                Map<String, String> params = new HashMap<>();
                 params.put("type", prefs.getString(Constants.FORM_TYPE, ""));
                 params.put("location", prefs.getString(Constants.FORM_LOCATION, ""));
                 params.put("time", prefs.getString(Constants.FORM_TIME, ""));

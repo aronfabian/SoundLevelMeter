@@ -1849,11 +1849,7 @@ public class DeviceName {
                         // Save to SharedPreferences so we don't need to make another request.
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putString(key, json.toString());
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-                            editor.apply();
-                        } else {
-                            editor.commit();
-                        }
+                        editor.apply();
                         return info;
                     }
                 }
@@ -1884,18 +1880,18 @@ public class DeviceName {
         }
         char[] arr = str.toCharArray();
         boolean capitalizeNext = true;
-        String phrase = "";
+        StringBuilder phrase = new StringBuilder();
         for (char c : arr) {
             if (capitalizeNext && Character.isLetter(c)) {
-                phrase += Character.toUpperCase(c);
+                phrase.append(Character.toUpperCase(c));
                 capitalizeNext = false;
                 continue;
             } else if (Character.isWhitespace(c)) {
                 capitalizeNext = true;
             }
-            phrase += c;
+            phrase.append(c);
         }
-        return phrase;
+        return phrase.toString();
     }
 
     /**

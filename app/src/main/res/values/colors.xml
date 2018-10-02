@@ -3,8 +3,6 @@
     <color name="colorPrimary">#595959</color>
     <color name="colorPrimaryDark">#3d3d3d</color>
     <color name="colorAccent">#ed0095ff</color>
-    <color name="needleColor">#007e54</color>
     <color name="faceColor">#bb2e2e2e</color>
-    <color name="scaleColor">#fd0080ff</color>
 
 </resources>

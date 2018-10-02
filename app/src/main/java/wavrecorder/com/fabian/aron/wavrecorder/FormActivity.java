@@ -37,20 +37,20 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form);
 
-        loudnessSeekBar = (SeekBar) findViewById(R.id.input_loudness);
+        loudnessSeekBar = findViewById(R.id.input_loudness);
         loudnessSeekBar.setOnSeekBarChangeListener(this);
-        loudnessValueText = (TextView) findViewById(R.id.text_loudnesvalue);
-        eventLengthSeekBar = (SeekBar) findViewById(R.id.input_eventlength);
+        loudnessValueText = findViewById(R.id.text_loudnesvalue);
+        eventLengthSeekBar = findViewById(R.id.input_eventlength);
         eventLengthSeekBar.setOnSeekBarChangeListener(this);
-        eventLengthValueText = (TextView) findViewById(R.id.text_eventlengthvalue);
-        sendButton = (Button) findViewById(R.id.button_formsend);
+        eventLengthValueText = findViewById(R.id.text_eventlengthvalue);
+        sendButton = findViewById(R.id.button_formsend);
         sendButton.setOnClickListener(this);
-        soundSysGroup = (RadioGroup) findViewById(R.id.sound_system);
-        targetAudGroup = (RadioGroup) findViewById(R.id.target_audience);
-        typeText = (EditText) findViewById(R.id.input_type);
-        locationText = (EditText) findViewById(R.id.input_location);
-        distanceText = (EditText) findViewById(R.id.input_distance);
-        commentText = (EditText) findViewById(R.id.input_comment);
+        soundSysGroup = findViewById(R.id.sound_system);
+        targetAudGroup = findViewById(R.id.target_audience);
+        typeText = findViewById(R.id.input_type);
+        locationText = findViewById(R.id.input_location);
+        distanceText = findViewById(R.id.input_distance);
+        commentText = findViewById(R.id.input_comment);
     }
 
     @Override
@@ -170,11 +170,7 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         }
         prefEditor.putString(Constants.FORM_COMMENT, commentText.getText().toString());
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            prefEditor.apply();
-        } else {
-            prefEditor.commit();
-        }
+        prefEditor.apply();
     }
 
     private boolean checkInputs() {

@@ -23,7 +23,8 @@
                 android:ems="10"
                 android:hint="@string/form_type"
                 android:inputType="text"
-                android:maxLength="100" />
+                android:maxLength="100"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/input_location"
@@ -33,7 +34,8 @@
                 android:ems="10"
                 android:hint="@string/form_location"
                 android:inputType="text"
-                android:maxLength="100" />
+                android:maxLength="100"
+                android:importantForAutofill="no" />
 
             <EditText
                 android:id="@+id/input_distance"
@@ -43,10 +45,10 @@
                 android:ems="10"
                 android:hint="@string/form_distance"
                 android:inputType="numberDecimal"
-                android:maxLength="4" />
+                android:maxLength="4"
+                android:importantForAutofill="no" />
 
             <TextView
-                android:id="@+id/text_loudness"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -71,7 +73,6 @@
                 android:textAlignment="center" />
 
             <TextView
-                android:id="@+id/text_eventlength"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -96,7 +97,6 @@
                 android:textAlignment="center" />
 
             <TextView
-                android:id="@+id/text_soundsystem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -142,7 +142,6 @@
             </RadioGroup>
 
             <TextView
-                android:id="@+id/text_targetaudience"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
@@ -195,7 +194,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:layout_editor_absoluteX="8dp"
-                tools:layout_editor_absoluteY="365dp" />
+                tools:layout_editor_absoluteY="365dp"
+                android:importantForAutofill="no" />
 
             <Button
                 android:id="@+id/button_formsend"

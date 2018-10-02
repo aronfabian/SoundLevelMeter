@@ -113,10 +113,8 @@ public class WavHelper {
                 .putInt((int) (wav.length() - 44)) // Subchunk2Size
                 .array();
 
-        RandomAccessFile accessWave = null;
         //noinspection CaughtExceptionImmediatelyRethrown
-        try {
-            accessWave = new RandomAccessFile(wav, "rw");
+        try (RandomAccessFile accessWave = new RandomAccessFile(wav, "rw")) {
             // ChunkSize
             accessWave.seek(4);
             accessWave.write(sizes, 0, 4);
@@ -127,15 +125,8 @@ public class WavHelper {
         } catch (IOException ex) {
             // Rethrow but we still close accessWave in our finally
             throw ex;
-        } finally {
-            if (accessWave != null) {
-                try {
-                    accessWave.close();
-                } catch (IOException ex) {
-                    //
-                }
-            }
         }
+        //
     }
 
 }

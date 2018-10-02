@@ -96,7 +96,8 @@
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_stop"
-        app:layout_constraintTop_toTopOf="@+id/btn_start" />
+        app:layout_constraintTop_toTopOf="@+id/btn_start"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/text_overdrive"

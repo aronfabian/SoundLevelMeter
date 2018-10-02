@@ -45,10 +45,10 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calibration);
 
-        Button startButton = (Button) findViewById(R.id.btn_start_calib);
-        Button stopButton = (Button) findViewById(R.id.btn_stop_calib);
-        Button sendButton = (Button) findViewById(R.id.btn_send_calib);
-        Button downloadButton = (Button) findViewById(R.id.btn_download_calib);
+        Button startButton = findViewById(R.id.btn_start_calib);
+        Button stopButton = findViewById(R.id.btn_stop_calib);
+        Button sendButton = findViewById(R.id.btn_send_calib);
+        Button downloadButton = findViewById(R.id.btn_download_calib);
         startButton.setOnClickListener(this);
         stopButton.setOnClickListener(this);
         sendButton.setOnClickListener(this);
@@ -77,7 +77,7 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
                     Intent startIntent = new Intent(CalibrationActivity.this, RecorderService.class);
                     startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                     startIntent.putExtra("CalibrationMode",true);
-                    CheckBox filterCheckBox = (CheckBox) findViewById(R.id.check_filters);
+                    CheckBox filterCheckBox = findViewById(R.id.check_filters);
                     startIntent.putExtra("useFilters",filterCheckBox.isChecked());
                     startService(startIntent);
 
@@ -182,11 +182,7 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            prefEditor.apply();
-        } else {
-            prefEditor.commit();
-        }
+        prefEditor.apply();
 
     }
 

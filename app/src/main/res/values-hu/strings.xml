@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">WavRecorder</string>
-    <string name="notification_title">WavRecorder</string>
-    <string name="notification_message">Recording</string>
-    <string name="ticker_text">WavRecorder</string>
     <string name="perm_phone_state_read">Azért, hogy pontosabb méréseket tudj végezni, hozzá kell férnünk a telefon adataihoz.</string>
     <string name="more_device_info">Kérlek kapcsolódj az internethez a pontosabb mérés érdekében.</string>
-    <string name="update_info">"A frissítések csak a következő mérésnél lépnek életbe."</string>
     <string name="meas_acc_title">Mérési pontosság</string>
     <string name="meas_acc_sum">Válassza ki a kívánt pontosságot</string>
     <string name="calc_time_title">Átlagolási idő</string>
     <string name="calc_time_sum">Válassza ki az átlagolási időt az SPL számításánál</string>
-    <string name="calib_title">Kalibrációs mód</string>
-    <string name="calib_sum">Kalibrációs fájl mentése</string>
     <string name="rec_started">A mérés már korábban elindult!</string>
     <string name="rec_stopped">A mérés nincs elindítva!</string>
     <string name="phonestate_denied">Engedély megtagadva: telefon állapotának kiolvasása</string>
@@ -23,8 +17,6 @@
     <string name="download_btn">Letöltés</string>
     <string name="calibration">Kalibráció</string>
     <string name="calib_summary">A telefon mikrofonjának kalibrálása.</string>
-    <string name="table_category">Zajszint kategória-jel</string>
-    <string name="table_db">Irányérték LAeq,M30 dB</string>
     <string name="table_recomm">Hallásvédelem szempontjából tett ajánlások</string>
     <string name="table_under3">3 évesnél fiatalabb:</string>
     <string name="table_3_to_14">3&#8212;14 év között:</string>
@@ -34,8 +26,6 @@
     <string name="table_max_2">Legfeljebb 2 óra tartózkodás</string>
     <string name="table_max_45">Legfeljebb 45 perc tartózkodás</string>
     <string name="overdrive">Túlvezérlés!</string>
-    <string name="age_table">Korcsoportok</string>
-    <string name="age_table_summary">Válassza ki, hogy mely korcsoportokat szeretné látni.</string>
     <string name="form_type">Rendezvény típus, pl.: koncert</string>
     <string name="form_location">Helyszín</string>
     <string name="form_distance">Távolásg a hangrendszertől méterben</string>

@@ -20,7 +20,7 @@ public class FilterPlugin {
     /**
      * Creates C++ object in order to do some signal processing using SuperpoweredSDK
      *
-     * @param samplerate
+     * @param samplerate Samplerate in Hz
      */
     public static native void filterProcessCreate(int samplerate);
 

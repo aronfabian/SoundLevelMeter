@@ -4,10 +4,10 @@ def superpowered_sdk_path = 'C:/Users/arons/SuperpoweredSDK/Superpowered'
 
 android { // main settings for your application
     compileSdkVersion = 26
-    buildToolsVersion = '27'
+    buildToolsVersion = '27.0.3'
     defaultConfig {
         applicationId "com.fabian.aron.wavrecorder"
-        minSdkVersion 23 // more than 95% of all active Android devices
+        minSdkVersion 24 // more than 95% of all active Android devices
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"

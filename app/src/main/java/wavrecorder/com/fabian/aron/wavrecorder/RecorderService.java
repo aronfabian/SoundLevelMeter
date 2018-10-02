@@ -215,11 +215,7 @@ public class RecorderService extends Service {
         String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putString(Constants.FORM_TIME, year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            prefEditor.apply();
-        } else {
-            prefEditor.commit();
-        }
+        prefEditor.apply();
 
         FileOutputStream os;
         if (saveFile) {
@@ -403,8 +399,7 @@ public class RecorderService extends Service {
                                 sumRmsSquareA += rmsSquareA;
                                 dBA = (10 * Math.log10((double) rmsSquareA / dBBase)) + offset;
                             }
-                            if (sumSquaresC == 0) {
-                            } else {
+                            if (sumSquaresC != 0) {
                                 double temp = (10 * Math.log10((double) rmsSquareC / dBBase)) + offset;
                                 rmsSquareC = sumSquaresC / sampleCount;
                                 if (temp > dBC) {

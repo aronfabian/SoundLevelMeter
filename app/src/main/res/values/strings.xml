@@ -1,17 +1,11 @@
 <resources>
     <string name="app_name">WavRecorder</string>
-    <string name="notification_title">WavRecorder</string>
-    <string name="notification_message">Recording</string>
-    <string name="ticker_text">WavRecorder</string>
     <string name="perm_phone_state_read">In order to check if a compensate filter is available to your phone we have to get some information from your phone.</string>
     <string name="more_device_info">In order to get more accurate measurement configuration please make an internet connection.</string>
-    <string name="update_info">"Updates will be enabled in the next measurement."</string>
     <string name="meas_acc_title">Measurement Accurate</string>
     <string name="meas_acc_sum">Select the desired accurate</string>
     <string name="calc_time_title">Calculation Time</string>
     <string name="calc_time_sum">Select the desired calculation time</string>
-    <string name="calib_title">Calibration Mode</string>
-    <string name="calib_sum">Save calibration wav file</string>
     <string name="rec_started">Recording has already started!</string>
     <string name="rec_stopped">Recording didn\'t started!</string>
     <string name="phonestate_denied">Permission denied: Read Phone State</string>
@@ -22,8 +16,6 @@
     <string name="download_btn">Download</string>
     <string name="calibration">Calibration</string>
     <string name="calib_summary">Calibration of the mobile phone\'s microphone.</string>
-    <string name="table_category">Category of noise level</string>
-    <string name="table_db">Guidance value LAeq,M30 dB</string>
     <string name="table_recomm">Hearing protection recommendations</string>
     <string name="table_under3">Under 3 years:</string>
     <string name="table_3_to_14">Between 3 and 14 years:</string>
@@ -33,8 +25,6 @@
     <string name="table_max_2">Up to 2 hours stay</string>
     <string name="table_max_45">Up to 45 minutes stay</string>
     <string name="overdrive">Overload!</string>
-    <string name="age_table">Age groups</string>
-    <string name="age_table_summary">Select which age groups you want to be visible.</string>
     <string name="form_type">Event type, e.g. concert</string>
     <string name="form_location">Location</string>
     <string name="form_distance">Distance from sound system in meter</string>

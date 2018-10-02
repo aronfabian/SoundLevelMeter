@@ -66,21 +66,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Button startButton = (Button) findViewById(R.id.btn_start);
-        Button stopButton = (Button) findViewById(R.id.btn_stop);
+        Button startButton = findViewById(R.id.btn_start);
+        Button stopButton = findViewById(R.id.btn_stop);
         startButton.setOnClickListener(this);
         stopButton.setOnClickListener(this);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        dBAText = (TextView) findViewById(R.id.text_dba);
-        dBCText = (TextView) findViewById(R.id.text_dbc);
-        lAeqText = (TextView) findViewById(R.id.text_laeq);
-        u3Text = (TextView) findViewById(R.id.text_u3_recom);
-        b314Text = (TextView) findViewById(R.id.text_3_14_recom);
-        b1418Text = (TextView) findViewById(R.id.text_14_18_recom);
-        timeText = (EditText) findViewById(R.id.text_time);
+        progressBar = findViewById(R.id.progressBar);
+        dBAText = findViewById(R.id.text_dba);
+        dBCText = findViewById(R.id.text_dbc);
+        lAeqText = findViewById(R.id.text_laeq);
+        u3Text = findViewById(R.id.text_u3_recom);
+        b314Text = findViewById(R.id.text_3_14_recom);
+        b1418Text = findViewById(R.id.text_14_18_recom);
+        timeText = findViewById(R.id.text_time);
         timeText.setFocusable(false);
-        overloadText = (TextView) findViewById(R.id.text_overdrive);
+        overloadText = findViewById(R.id.text_overdrive);
         overloadText.setVisibility(View.INVISIBLE);
         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(this);
     }
@@ -197,11 +197,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     }
                     Log.d("spl_rms",String.valueOf(spl_rms));
                     prefEditor.putString(Constants.LAEQ_LAST,String.valueOf(spl_rms));
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-                        prefEditor.apply();
-                    } else {
-                        prefEditor.commit();
-                    }
+                    prefEditor.apply();
                     LAeqHistory.clear();
                     Intent formIntent = new Intent(context, FormActivity.class);
                     startActivity(formIntent);
@@ -301,9 +297,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         filter.addAction(Constants.ACTION.RECORDERSTOPPED_ACTION);
         registerReceiver(broadcastReceiver, filter);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        Group u3Group = (Group) findViewById(R.id.group_u3);
-        Group b314Group = (Group) findViewById(R.id.group_3_14);
-        Group b1418Group = (Group) findViewById(R.id.group_14_18);
+        Group u3Group = findViewById(R.id.group_u3);
+        Group b314Group = findViewById(R.id.group_3_14);
+        Group b1418Group = findViewById(R.id.group_14_18);
 
         if(prefs.getBoolean("u3",true)){
             u3Group.setVisibility(View.VISIBLE);
@@ -322,7 +318,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         String calibPref = prefs.getString(Constants.CALIBTYPE,CalibrationType.NOT_CALIBRATED.toString());
         Constants.calibrationType = CalibrationType.valueOf(calibPref);
-        TextView calibText = (TextView) findViewById(R.id.text_calib);
+        TextView calibText = findViewById(R.id.text_calib);
         switch(Constants.calibrationType){
             case NOT_CALIBRATED:
                 calibText.setText(R.string.not_calib);

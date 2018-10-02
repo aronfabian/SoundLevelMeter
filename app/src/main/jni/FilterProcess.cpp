@@ -131,7 +131,7 @@ Java_wavrecorder_com_fabian_aron_wavrecorder_FilterPlugin_addResonantFilterA(
         return fp->aFilterNum;
     }
 
-    SuperpoweredFilter *res_filt;
+    SuperpoweredFilter *res_filt = nullptr;
 
     switch (filterType) {
         case HPF:
@@ -140,6 +140,8 @@ Java_wavrecorder_com_fabian_aron_wavrecorder_FilterPlugin_addResonantFilterA(
         case LPF:
             res_filt = new SuperpoweredFilter(SuperpoweredFilter_Resonant_Lowpass, fp->samplerate);
             break;
+        default :
+            return 0;
     }
 
     res_filt->setResonantParameters(cutOffFreqency, resonance);
@@ -188,7 +190,7 @@ Java_wavrecorder_com_fabian_aron_wavrecorder_FilterPlugin_addResonantFilterC(
         return fp->cFilterNum;
     }
 
-    SuperpoweredFilter *res_filt;
+    SuperpoweredFilter *res_filt = nullptr;
 
     switch (filterType) {
         case HPF:
@@ -197,6 +199,8 @@ Java_wavrecorder_com_fabian_aron_wavrecorder_FilterPlugin_addResonantFilterC(
         case LPF:
             res_filt = new SuperpoweredFilter(SuperpoweredFilter_Resonant_Lowpass, fp->samplerate);
             break;
+        default:
+            return 0;
     }
 
     res_filt->setResonantParameters(cutOffFreqency, resonance);
