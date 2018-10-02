@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView b1418Text;
     private EditText timeText;
     private TextView overloadText;
+    private int measLengthSec;
+    private int overloadSumCount;
 
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
@@ -159,19 +161,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Log.d("MAIN", String.valueOf(dBA));
                     break;
                 case Constants.ACTION.LAEQ_BROADCAST_ACTION:
+                    measLengthSec = intent.getIntExtra("measLength",0);
                     double lAeq = intent.getDoubleExtra("LAeq", 0);
-                    lAeqText.setText(String.format("LAeq: %.1fdB",lAeq));
-                    //lAeqText.setText("LAeq: " + (int) lAeq + "dB");
+                    if(measLengthSec > 60){
+                        lAeqText.setText(String.format("LAeq: %.1fdB",lAeq));
+                    }
                     LAeqHistory.add(String.format("%.1f",lAeq));
                     setRecommendationTexts(lAeq);
-                    int measLengthSec = intent.getIntExtra("measLength",0);
                     int min = measLengthSec / 60;
                     int sec = measLengthSec - (min*60);
                     int h = min / 60;
                     min = min - (h*60);
                     timeText.setText(String.format("%02d:%02d:%02d",h,min,sec));
-                    int overloadSecCount = intent.getIntExtra("overloadCount",0);
-                    overloadCategory(overloadSecCount);
+                    overloadSumCount += intent.getIntExtra("overloadCount",0);
+                    Log.d("tulvezminta",String.valueOf(overloadSumCount));
+                    overloadCategory();
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                     if (isOnline()) {
@@ -209,9 +213,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
-    private void overloadCategory(int overloadSecCount) {
-        if (overloadSecCount > 0){
+    private void overloadCategory() {
+        if (overloadSumCount > 0){
             overloadText.setVisibility(View.VISIBLE);
+            if (overloadSumCount > measLengthSec*4410){
+                overloadText.setTextColor(Color.RED);
+            }else{
+                overloadText.setTextColor(Color.rgb(255,140,0));
+            }
         }
         else{
             overloadText.setVisibility((View.INVISIBLE));
@@ -219,39 +228,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setRecommendationTexts(double lAeq) {
-        if(lAeq <= 75){
-            u3Text.setText(R.string.table_no_limit);
-            b314Text.setText(R.string.table_no_limit);
-            b1418Text.setText(R.string.table_no_limit);
-            lAeqText.setBackgroundColor(Color.GREEN);
+        if(measLengthSec > 60){
+            if(lAeq <= 75){
+                u3Text.setText(R.string.table_no_limit);
+                b314Text.setText(R.string.table_no_limit);
+                b1418Text.setText(R.string.table_no_limit);
+                lAeqText.setBackgroundColor(Color.GREEN);
+            }
+            if(lAeq > 75 && lAeq <= 80){
+                u3Text.setText(R.string.table_notrecomm);
+                b314Text.setText(R.string.table_max_2);
+                b1418Text.setText(R.string.table_no_limit);
+                lAeqText.setBackgroundColor(Color.YELLOW);
+            }
+            if(lAeq > 80 && lAeq <= 85){
+                u3Text.setText(R.string.table_notrecomm);
+                b314Text.setText(R.string.table_max_45);
+                b1418Text.setText(R.string.table_no_limit);
+                lAeqText.setBackgroundColor(Color.RED);
+            }
+            if(lAeq > 85 && lAeq <= 90){
+                u3Text.setText(R.string.table_notrecomm);
+                b314Text.setText(R.string.table_notrecomm);
+                b1418Text.setText(R.string.table_max_2);
+            }
+            if(lAeq > 90 && lAeq <= 95){
+                u3Text.setText(R.string.table_notrecomm);
+                b314Text.setText(R.string.table_notrecomm);
+                b1418Text.setText(R.string.table_max_45);
+            }
+            if(lAeq > 95){
+                u3Text.setText(R.string.table_notrecomm);
+                b314Text.setText(R.string.table_notrecomm);
+                b1418Text.setText(R.string.table_notrecomm);
+            }
         }
-        if(lAeq > 75 && lAeq <= 80){
-            u3Text.setText(R.string.table_notrecomm);
-            b314Text.setText(R.string.table_max_2);
-            b1418Text.setText(R.string.table_no_limit);
-            lAeqText.setBackgroundColor(Color.YELLOW);
-        }
-        if(lAeq > 80 && lAeq <= 85){
-            u3Text.setText(R.string.table_notrecomm);
-            b314Text.setText(R.string.table_max_45);
-            b1418Text.setText(R.string.table_no_limit);
-            lAeqText.setBackgroundColor(Color.RED);
-        }
-        if(lAeq > 85 && lAeq <= 90){
-            u3Text.setText(R.string.table_notrecomm);
-            b314Text.setText(R.string.table_notrecomm);
-            b1418Text.setText(R.string.table_max_2);
-        }
-        if(lAeq > 90 && lAeq <= 95){
-            u3Text.setText(R.string.table_notrecomm);
-            b314Text.setText(R.string.table_notrecomm);
-            b1418Text.setText(R.string.table_max_45);
-        }
-        if(lAeq > 95){
-            u3Text.setText(R.string.table_notrecomm);
-            b314Text.setText(R.string.table_notrecomm);
-            b1418Text.setText(R.string.table_notrecomm);
-        }
+
     }
 
 
@@ -364,6 +376,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     Intent startIntent = new Intent(MainActivity.this, RecorderService.class);
                     startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                     startService(startIntent);
+                    overloadSumCount = 0;
 
                 } else {
                     Toast.makeText(this, R.string.rec_started, Toast.LENGTH_LONG).show();
