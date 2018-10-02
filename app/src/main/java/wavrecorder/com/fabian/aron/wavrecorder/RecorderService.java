@@ -73,6 +73,7 @@ public class RecorderService extends Service {
     private long rmsSquareC;
     private long sumRmsSquareA = 0;
     private int measLength = 0;
+    private boolean useFilters = false;
 
     static {
         if (MediaRecorder.getAudioSourceMax() >= 9) {
@@ -108,6 +109,7 @@ public class RecorderService extends Service {
         if (intent != null) {
             if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
                 saveFile = intent.getBooleanExtra("CalibrationMode", false);
+                useFilters = intent.getBooleanExtra("useFilters",false);
                 RecorderService.isAlive = true;
                 Notification notification;
                 Intent notifStopIntent = new Intent(this, RecorderService.class);
@@ -188,7 +190,7 @@ public class RecorderService extends Service {
         setRmsUpdateTime(rmsTime);
 
         FilterPlugin.filterProcessCreate(SAMPLERATE);
-        if(!saveFile && Constants.calibrationType != CalibrationType.NOT_CALIBRATED){
+        if((!saveFile && Constants.calibrationType != CalibrationType.NOT_CALIBRATED) || (saveFile && useFilters && (Constants.calibrationType != CalibrationType.NOT_CALIBRATED))){
             FilterPlugin.setFiltersFromPref(this, classType);
         } else {
             filterNumA = 0;

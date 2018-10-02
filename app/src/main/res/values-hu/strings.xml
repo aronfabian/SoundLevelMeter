@@ -68,6 +68,9 @@
     <string name="uniq_calib">Egyedileg kalibrált</string>
     <string name="table_settings_sum">Válaszd ki a látható koroszályokat</string>
     <string name="table_settings">Látható korosztályok</string>
+    <string name="calib_filter">Kalibrációs szűrők használata</string>
+    <string name="no_calib_data">Nem található kalibrációs adat</string>
+    <string name="calib_data_downloaded">Kalibrációs adat letöltve</string>
 
 
 

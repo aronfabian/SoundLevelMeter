@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -76,6 +77,8 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
                     Intent startIntent = new Intent(CalibrationActivity.this, RecorderService.class);
                     startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                     startIntent.putExtra("CalibrationMode",true);
+                    CheckBox filterCheckBox = (CheckBox) findViewById(R.id.check_filters);
+                    startIntent.putExtra("useFilters",filterCheckBox.isChecked());
                     startService(startIntent);
 
                 } else {
@@ -147,6 +150,10 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
                     }
                     if(Constants.calibrationType != CalibrationType.NOT_CALIBRATED){
                         saveCalibrationData();
+                        Toast.makeText(getApplicationContext(),R.string.calib_data_downloaded,Toast.LENGTH_LONG).show();
+                    }else {
+                        Toast.makeText(getApplicationContext(),R.string.no_calib_data,Toast.LENGTH_LONG).show();
+
                     }
                 }catch (JSONException e){
                     e.printStackTrace();

@@ -67,6 +67,9 @@
     <string name="uniq_calib">Uniquely Calibrated</string>
     <string name="table_settings_sum">Select viewable age groups</string>
     <string name="table_settings">Viewable age groups</string>
+    <string name="calib_filter">Use calibration filters</string>
+    <string name="no_calib_data">No calibration data</string>
+    <string name="calib_data_downloaded">Calibration data has downloaded</string>
 
 
 

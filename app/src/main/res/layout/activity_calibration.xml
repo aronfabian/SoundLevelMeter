@@ -55,4 +55,15 @@
         android:text="@string/download_btn"
         app:layout_constraintStart_toStartOf="@+id/btn_stop_calib"
         app:layout_constraintTop_toBottomOf="@+id/btn_stop_calib" />
+
+    <CheckBox
+        android:id="@+id/check_filters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:checked="false"
+        android:text="@string/calib_filter"
+        app:layout_constraintStart_toStartOf="@+id/btn_send_calib"
+        app:layout_constraintTop_toBottomOf="@+id/btn_send_calib" />
 </android.support.constraint.ConstraintLayout>
