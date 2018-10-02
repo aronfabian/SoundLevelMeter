@@ -258,6 +258,7 @@ public class RecorderService extends Service {
                 float[] floatsC = new float[buffer.length];
                 Long tsLong1, tsLong2, dtsLong;
                 String ts;
+                int overLoadCount = 0;
 
                 @Override
                 public void run() {
@@ -274,6 +275,7 @@ public class RecorderService extends Service {
 //                            Log.d(LOG_TAG, "Buffer pos = " + Integer.toString(bBufferPosInSamples));
 //                            Log.d(LOG_TAG, Integer.toString(nSamplesRead) + " samples read.");
 //                            Log.d(LOG_TAG, "Wait time for read: " + dtsLong.toString() + " milli seconds");
+                            overLoadCount += overLoadCheck(buffer,nSamplesRead);
                             floats = shortToFloat(buffer);
                             if (filterNumC != 0) {
                                 FilterPlugin.filterProcessingC(floats, floatsC, nSamplesRead);
@@ -362,6 +364,16 @@ public class RecorderService extends Service {
                     }
                 }
 
+                private int overLoadCheck(short[] buffer, int length) {
+                    int overloadCount = 0;
+                    for (short value : Arrays.copyOfRange(buffer, 0, length - 1)) {
+                        if (value == Short.MAX_VALUE){
+                            overloadCount++;
+                        }
+                    }
+                    return overloadCount;
+                }
+
                 private void calcRMS(int lengthInSamples) {
 
 //                  UNPROCESSED:
@@ -417,6 +429,8 @@ public class RecorderService extends Service {
                             lAeq = (10 * Math.log10((double) sumRmsSquareA / measLength / dBBase)) + offset;
                             meanIntent.putExtra("LAeq", lAeq);
                             meanIntent.putExtra("measLength",measLength);
+                            meanIntent.putExtra("overloadCount",overLoadCount);
+                            overLoadCount = 0;
                             sendBroadcast(meanIntent);
                         }
 

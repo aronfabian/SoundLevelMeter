@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView b314Text;
     private TextView b1418Text;
     private EditText timeText;
+    private TextView overloadText;
 
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
@@ -77,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         b1418Text = (TextView) findViewById(R.id.text_14_18_recom);
         timeText = (EditText) findViewById(R.id.text_time);
         timeText.setFocusable(false);
+        overloadText = (TextView) findViewById(R.id.text_overdrive);
+        overloadText.setVisibility(View.INVISIBLE);
         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(this);
     }
 
@@ -167,6 +170,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     int h = min / 60;
                     min = min - (h*60);
                     timeText.setText(String.format("%02d:%02d:%02d",h,min,sec));
+                    int overloadSecCount = intent.getIntExtra("overloadCount",0);
+                    overloadCategory(overloadSecCount);
                     break;
                 case ConnectivityManager.CONNECTIVITY_ACTION:
                     if (isOnline()) {
@@ -203,6 +208,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
+
+    private void overloadCategory(int overloadSecCount) {
+        if (overloadSecCount > 0){
+            overloadText.setVisibility(View.VISIBLE);
+        }
+        else{
+            overloadText.setVisibility((View.INVISIBLE));
+        }
+    }
 
     private void setRecommendationTexts(double lAeq) {
         if(lAeq <= 75){

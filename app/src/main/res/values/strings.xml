@@ -32,7 +32,7 @@
     <string name="table_notrecomm">Not recommended</string>
     <string name="table_max_2">Up to 2 hours stay</string>
     <string name="table_max_45">Up to 45 minutes stay</string>
-    <string name="overdrive">Overdrive!</string>
+    <string name="overdrive">Overload!</string>
     <string name="age_table">Age groups</string>
     <string name="age_table_summary">Select which age groups you want to be visible.</string>
     <string name="form_type">Event type, e.g. concert</string>
