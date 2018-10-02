@@ -31,11 +31,6 @@ import java.util.Arrays;
  * Created by Aron Fabian 2018. 03. 23..
  */
 
-enum FILTER_TYPES {
-    HPF, LPF, Parametric
-};
-
-
 public class RecorderService extends Service {
 
     private static final String LOG_TAG = "RecorderService";
@@ -49,7 +44,7 @@ public class RecorderService extends Service {
     private short[] buffer = new short[REC_BUFFERSIZE / 4]; //REC_BUFFERSIZE / 4
     private short[] bufferC = new short[REC_BUFFERSIZE / 4]; //REC_BUFFERSIZE / 4
 
-    private byte[] bBuffer = new byte[65536 * 2]; // This is the byte buffer, which is written to the wav file
+    private byte[] bBuffer = new byte[REC_BUFFERSIZE*2]; // This is the byte buffer, which is written to the wav file
     int bBufferLengthInSamples = bBuffer.length / 2;
 
 
