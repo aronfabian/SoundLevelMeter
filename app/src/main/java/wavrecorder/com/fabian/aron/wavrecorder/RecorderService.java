@@ -11,12 +11,11 @@ import android.content.SharedPreferences;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
-import android.os.Build;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -116,9 +115,9 @@ public class RecorderService extends Service {
                 notifStopIntent.setAction(Constants.ACTION.NOTIFSTOPFOREGROUND_ACTION);
                 PendingIntent pStopIntent = PendingIntent.getService(this, 0, notifStopIntent, 0);
                 NotificationCompat.Builder nBuilder =
-                        (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                        (NotificationCompat.Builder) new NotificationCompat.Builder(this, Constants.CHANNEL_ID)
                                 .setSmallIcon(R.mipmap.ic_launcher_foreground)
-                                .setContentTitle("Recording...!")
+                                .setContentTitle(getString(R.string.notification_title))
                                 .setOngoing(true)
                                 .addAction(R.drawable.stop_icon, "Stop", pStopIntent);
                 notification = nBuilder.build();
@@ -222,9 +221,9 @@ public class RecorderService extends Service {
             File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
             dir.mkdirs();
 
-
-            wavFile = new File(dir, Constants.deviceUniqueID + "_" + year + "_" + month + "_" + day + "_" + hour + "_" + minute + "_" + second + ".wav");
-            infoFile = new File(dir, Constants.deviceUniqueID + "_info.txt");
+            Constants.fileName = Constants.deviceUniqueID + "_" + year  + month + day + "_" + hour + minute + second;
+            wavFile = new File(dir,  Constants.fileName + ".wav");
+            infoFile = new File(dir,  Constants.fileName + ".txt");
             os = null;
         }
         try {
@@ -261,10 +260,10 @@ public class RecorderService extends Service {
                     while (isRunning) {
                         synchronized (lock) {
 
-                            tsLong1 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
+
                             nSamplesRead = recorder.read(buffer, 0, buffer.length);
-                            tsLong2 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
-                            dtsLong = (tsLong2 - tsLong1) / 1000000;
+
+
 //                            Log.d(LOG_TAG, "Buffer pos = " + Integer.toString(bBufferPosInSamples));
 //                            Log.d(LOG_TAG, Integer.toString(nSamplesRead) + " samples read.");
 //                            Log.d(LOG_TAG, "Wait time for read: " + dtsLong.toString() + " milli seconds");
@@ -276,7 +275,11 @@ public class RecorderService extends Service {
                                 floatsC = floats;
                             }
                             if (filterNumA != 0) {
+                                tsLong1 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
                                 FilterPlugin.filterProcessingA(floats, floats, nSamplesRead);
+                                tsLong2 = android.os.SystemClock.elapsedRealtimeNanos(); // System.currentTimeMillis();
+                                dtsLong = (tsLong2 - tsLong1);
+                                Log.d("FilterTime",  dtsLong.toString() + " nano seconds");
                             }
                             buffer = floatToShort(floats);
                             bufferC = floatToShort(floatsC);

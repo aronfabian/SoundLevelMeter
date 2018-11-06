@@ -2,6 +2,9 @@ package wavrecorder.com.fabian.aron.wavrecorder;
 
 import android.Manifest;
 import android.animation.ObjectAnimator;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +20,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.StringRes;
 import android.support.constraint.Group;
 import android.support.v4.app.ActivityCompat;
@@ -83,6 +87,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         overloadText = findViewById(R.id.text_overdrive);
         overloadText.setVisibility(View.INVISIBLE);
         MainActivityPermissionsDispatcher.getPhoneInfoWithPermissionCheck(this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel();
+        }
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private void createChannel() {
+        NotificationManager mNotificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        // The id of the channel.
+        String id = Constants.CHANNEL_ID;
+        // The user-visible name of the channel.
+        CharSequence name = "Media playback";
+        // The user-visible description of the channel.
+        String description = "Media playback controls";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        NotificationChannel mChannel = new NotificationChannel(id, name, importance);
+        // Configure the notification channel.
+        mChannel.setDescription(description);
+        mChannel.setShowBadge(false);
+        mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        mNotificationManager.createNotificationChannel(mChannel);
     }
 
     @Override

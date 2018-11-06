@@ -207,8 +207,12 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
         smr.addStringParam("USER","123");
 
         File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
-        File wavFile  = lastFileModified(dir.getAbsolutePath());
-        smr.addFile("file", wavFile.getAbsolutePath());
+        //File wavFile  = lastFileModified(dir.getAbsolutePath());
+        File wavFile  = new File(dir, Constants.fileName + ".wav");
+        smr.addFile("wavFile", wavFile.getAbsolutePath());
+
+        File infoFile = new File(dir, Constants.fileName + ".txt");
+        smr.addFile("infoFile", infoFile.getAbsolutePath());
         Log.d("MULTIPART: ",smr.toString());
 
         RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());

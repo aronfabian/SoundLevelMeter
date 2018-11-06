@@ -57,5 +57,9 @@ public class Constants {
     public static final String LAEQ_LAST = "laeq_last";
     public static final String CALIBTYPE = "calibration_type";
 
+    public static String fileName = "";
+
+    public static final String CHANNEL_ID = "notification_channel";
+
 
 }

@@ -60,6 +60,7 @@
     <string name="calib_filter">Use calibration filters</string>
     <string name="no_calib_data">No calibration data</string>
     <string name="calib_data_downloaded">Calibration data has downloaded</string>
+    <string name="notification_title">Recording...!</string>
 
 
 
