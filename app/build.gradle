@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-def superpowered_sdk_path = 'C:/Users/arons/SuperpoweredSDK/Superpowered'
+def superpowered_sdk_path = '/Users/ferko/SuperpoweredSDK/Superpowered'
 
 android { // main settings for your application
     compileSdkVersion = 26

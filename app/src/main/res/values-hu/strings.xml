@@ -28,7 +28,7 @@
     <string name="overdrive">Túlvezérlés!</string>
     <string name="form_type">Rendezvény típus, pl.: koncert</string>
     <string name="form_location">Helyszín</string>
-    <string name="form_distance">Távolásg a hangrendszertől méterben</string>
+    <string name="form_distance">Távolság a hangrendszertől méterben</string>
     <string name="form_loudness">Hangosságérzet</string>
     <string name="form_comment">Hozzászólás</string>
     <string name="form_targetaudince">Közönség célcsoport</string>
