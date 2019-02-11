@@ -172,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case Constants.ACTION.DBA_DBC_BROADCAST_ACTION:
                     double dBA = intent.getDoubleExtra("dBA", 0);
                     double dBC = intent.getDoubleExtra("dBC_max", 0);
-                    dBCText.setText((int) dBC + "dBCmax");
+                    //dBCText.setText((int) dBC + "dBCmax");
+                    dBCText.setText(String.format("%.1f dBCmax",dBC));
 
                     // progressbar value checks
                     if (dBA < 0) {
@@ -182,7 +183,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         dBA = progressBar.getMax();
                     }
                     ObjectAnimator.ofInt(progressBar, "progress", (int) dBA).start();
-                    dBAText.setText(String.valueOf((int) dBA) + "dBA");
+                    //dBAText.setText(String.valueOf((int) dBA) + "dBA");
+                    dBAText.setText(String.format("%.1f dBA",dBA));
                     Log.d("MAIN", String.valueOf(dBA));
                     break;
                 case Constants.ACTION.LAEQ_BROADCAST_ACTION:
