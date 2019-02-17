@@ -120,7 +120,7 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                             (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
                     jobScheduler.schedule(new JobInfo.Builder(4,
                             new ComponentName(this, UploadJobService.class))
-                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_NOT_ROAMING)
+                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
                             .setRequiresCharging(false)
                             .build());
                 }

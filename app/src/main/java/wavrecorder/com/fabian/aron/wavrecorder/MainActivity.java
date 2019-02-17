@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         CharSequence name = "Media playback";
         // The user-visible description of the channel.
         String description = "Media playback controls";
-        int importance = NotificationManager.IMPORTANCE_LOW;
+        int importance = NotificationManager.IMPORTANCE_HIGH;
         NotificationChannel mChannel = new NotificationChannel(id, name, importance);
         // Configure the notification channel.
         mChannel.setDescription(description);
@@ -172,7 +172,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case Constants.ACTION.DBA_DBC_BROADCAST_ACTION:
                     double dBA = intent.getDoubleExtra("dBA", 0);
                     double dBC = intent.getDoubleExtra("dBC_max", 0);
-                    dBCText.setText((int) dBC + "dBCmax");
+                    //dBCText.setText((int) dBC + "dBCmax");
+                    dBCText.setText(String.format("%.1f dBCmax",dBC));
 
                     // progressbar value checks
                     if (dBA < 0) {
@@ -182,7 +183,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         dBA = progressBar.getMax();
                     }
                     ObjectAnimator.ofInt(progressBar, "progress", (int) dBA).start();
-                    dBAText.setText(String.valueOf((int) dBA) + "dBA");
+                    //dBAText.setText(String.valueOf((int) dBA) + "dBA");
+                    dBAText.setText(String.format("%.1f dBA",dBA));
                     Log.d("MAIN", String.valueOf(dBA));
                     break;
                 case Constants.ACTION.LAEQ_BROADCAST_ACTION:
@@ -398,6 +400,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
                     startService(startIntent);
                     overloadSumCount = 0;
+                    resetUI();
 
                 } else {
                     Toast.makeText(this, R.string.rec_started, Toast.LENGTH_LONG).show();
@@ -417,6 +420,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    private void resetUI() {
+        u3Text.setText("");
+        b314Text.setText("");
+        b1418Text.setText("");
+        lAeqText.setBackgroundColor(Color.TRANSPARENT);
+        lAeqText.setText("LAeq");
     }
 
 

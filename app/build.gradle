@@ -36,7 +36,7 @@ android { // main settings for your application
         }
     }
     compileSdkVersion 26
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     productFlavors {
     }
 }

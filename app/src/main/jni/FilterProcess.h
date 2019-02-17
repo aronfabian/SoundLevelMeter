@@ -12,7 +12,7 @@
 
 class FilterProcess {
 public:
-    static const int MAX_FILTER_NUM = 15;
+    static const int MAX_FILTER_NUM = 30;
     SuperpoweredFilter *aFilterList[MAX_FILTER_NUM], *cFilterList[MAX_FILTER_NUM];
     unsigned int samplerate;
     int aFilterNum, cFilterNum;

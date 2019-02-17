@@ -73,6 +73,7 @@ public class RecorderService extends Service {
     private long sumRmsSquareA = 0;
     private int measLength = 0;
     private boolean useFilters = false;
+    private double fullScaleSPL = 0;
 
     static {
         if (MediaRecorder.getAudioSourceMax() >= 9) {
@@ -187,6 +188,7 @@ public class RecorderService extends Service {
         classType = prefs.getString("class_type", Constants.MEASUREMENT_CLASS.CLASS_ONE); // accurate
         String rmsTime = prefs.getString("rms_time", "sec");
         setRmsUpdateTime(rmsTime);
+        fullScaleSPL = prefs.getFloat("fullScaleSPL",0);
 
         FilterPlugin.filterProcessCreate(SAMPLERATE);
         if((!saveFile && Constants.calibrationType != CalibrationType.NOT_CALIBRATED) || (saveFile && useFilters && (Constants.calibrationType != CalibrationType.NOT_CALIBRATED))){
@@ -381,11 +383,16 @@ public class RecorderService extends Service {
 //                      Audio input sensitivity SHOULD be set such that a 90 dB sound power level
 //                      (SPL) source at 1000 Hz yields RMS of 2500 for 16-bit samples.
                     double offset;
-                    if (AUDIOSOURCE == MediaRecorder.AudioSource.UNPROCESSED) {
-                        offset = 129.98;
+                    if (Math.abs(fullScaleSPL) < 0.00001){ // equality test for float or double
+                        if (AUDIOSOURCE == MediaRecorder.AudioSource.UNPROCESSED) {
+                            offset = 129.98;
+                        } else {
+                            offset = 112.35;
+                        }
                     } else {
-                        offset = 112.35;
+                        offset = fullScaleSPL;
                     }
+
                     long dBBase = 32768 * 32768;
 
                     int i = 0;

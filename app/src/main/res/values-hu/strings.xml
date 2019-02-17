@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">WavRecorder</string>
+    <string name="app_name">Zajszintmérő</string>
     <string name="perm_phone_state_read">Azért, hogy pontosabb méréseket tudj végezni, hozzá kell férnünk a telefon adataihoz.</string>
     <string name="more_device_info">Kérlek kapcsolódj az internethez a pontosabb mérés érdekében.</string>
     <string name="meas_acc_title">Mérési pontosság</string>
@@ -28,7 +28,7 @@
     <string name="overdrive">Túlvezérlés!</string>
     <string name="form_type">Rendezvény típus, pl.: koncert</string>
     <string name="form_location">Helyszín</string>
-    <string name="form_distance">Távolásg a hangrendszertől méterben</string>
+    <string name="form_distance">Távolság a hangrendszertől méterben</string>
     <string name="form_loudness">Hangosságérzet</string>
     <string name="form_comment">Hozzászólás</string>
     <string name="form_targetaudince">Közönség célcsoport</string>

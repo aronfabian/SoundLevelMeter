@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WavRecorder</string>
+    <string name="app_name">SoundLevelMeter</string>
     <string name="perm_phone_state_read">In order to check if a compensate filter is available to your phone we have to get some information from your phone.</string>
     <string name="more_device_info">In order to get more accurate measurement configuration please make an internet connection.</string>
     <string name="meas_acc_title">Measurement Accurate</string>
