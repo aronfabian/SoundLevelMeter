@@ -98,7 +98,7 @@ public class FilterPlugin {
      * @param classType "1" = Class1 or "2" = Class2
      */
     public static void setFiltersFromPref(Context context, String classType) {
-        String filters = null;
+
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         try {
             JSONObject classSelect;

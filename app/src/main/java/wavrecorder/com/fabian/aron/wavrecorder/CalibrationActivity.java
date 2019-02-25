@@ -175,6 +175,12 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
         prefEditor.putString(Constants.CALIBTYPE,Constants.calibrationType.toString());
         try {
             if(bestMatchPhone != null){
+                if (bestMatchPhone.has("full_scale_spl")){
+                    prefEditor.putFloat("fullScaleSPL",Float.valueOf(bestMatchPhone.getString("full_scale_spl")));
+                } else  {
+                    prefEditor.putFloat("fullScaleSPL",0);
+                }
+
                 prefEditor.putString("classOneCalibData",bestMatchPhone.getString("Class1"));
                 prefEditor.putString("classTwoCalibData",bestMatchPhone.getString("Class2"));
             }
@@ -220,21 +226,4 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
 
     }
 
-    public static File lastFileModified(String dir) {
-        File fl = new File(dir);
-        File[] files = fl.listFiles(new FileFilter() {
-            public boolean accept(File file) {
-                return file.isFile();
-            }
-        });
-        long lastMod = Long.MIN_VALUE;
-        File choice = null;
-        for (File file : files) {
-            if (file.lastModified() > lastMod) {
-                choice = file;
-                lastMod = file.lastModified();
-            }
-        }
-        return choice;
-    }
 }

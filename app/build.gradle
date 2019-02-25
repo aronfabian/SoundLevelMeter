@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-def superpowered_sdk_path = '/Users/ferko/SuperpoweredSDK/Superpowered'
+def superpowered_sdk_path = 'C:/Users/arons/SuperpoweredSDK/Superpowered'
 
 android { // main settings for your application
     compileSdkVersion = 26
@@ -36,7 +36,7 @@ android { // main settings for your application
         }
     }
     compileSdkVersion 26
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     productFlavors {
     }
 }
@@ -52,6 +52,7 @@ dependencies {
         // if you don't use android.app.Fragment you can exclude support for them
         exclude module: "support-v13"
     }
+    implementation 'com.opencsv:opencsv:4.5'
     implementation 'com.android.support:design:26.1.0'
     annotationProcessor "com.github.hotchemi:permissionsdispatcher-processor:3.1.0"
 }

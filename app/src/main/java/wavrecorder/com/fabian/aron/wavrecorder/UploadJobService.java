@@ -60,17 +60,10 @@ public class UploadJobService extends JobService {
                 params.put("loudness", prefs.getString(Constants.FORM_LOUDNESS, ""));
                 params.put("comment", prefs.getString(Constants.FORM_COMMENT, ""));
                 params.put("calibrated", (Constants.calibrationType.ordinal() > 0) ? "1" : "0");
+                params.put("target_audience", prefs.getString(Constants.FORM_TARGETAUD, "0"));
+                params.put("event_duration", prefs.getString(Constants.FORM_EVENTLENGTH, "0"));
+                params.put("reinforcement_type", prefs.getString(Constants.FORM_SOUNDSYS, "0"));
                 params.put("request_type", "insert");
-
-//                Log.d("type", prefs.getString(Constants.FORM_TYPE,""));
-//                Log.d("location", prefs.getString(Constants.FORM_LOCATION,""));
-//                Log.d("time",prefs.getString(Constants.FORM_TIME,""));
-//                Log.d("spl_rms", prefs.getString(Constants.LAEQ_LAST,""));
-//                Log.d("distance", prefs.getString(Constants.FORM_DISTANCE,""));
-//                Log.d("phone",Constants.deviceUniqueID);
-//                Log.d("loudness", prefs.getString(Constants.FORM_LOUDNESS,""));
-//                Log.d("comment", prefs.getString(Constants.FORM_COMMENT,""));
-//                Log.d("calibrated",(Constants.calibrationType.ordinal() > 0) ? "1":"0");
                 return params;
             }
         };

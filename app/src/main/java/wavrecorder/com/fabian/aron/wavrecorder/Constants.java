@@ -53,7 +53,8 @@ public class Constants {
     public static final String FORM_EVENTLENGTH = "form_eventlength";
     public static final String FORM_SOUNDSYS = "form_soundsys";
     public static final String FORM_TARGETAUD = "form_targetaud";
-    public static final String LAEQ_HISTORY = "laeq_history";
+    public static final String LA_HISTORY = "la_history";
+    public static final String LC_HISTORY = "lc_history";
     public static final String LAEQ_LAST = "laeq_last";
     public static final String CALIBTYPE = "calibration_type";
 

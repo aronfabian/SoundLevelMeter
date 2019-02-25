@@ -124,13 +124,13 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                             .setRequiresCharging(false)
                             .build());
                 }
+                findViewById(R.id.button_formsend).setEnabled(false);
                 break;
             default:
         }
     }
 
     private void saveInputs() {
-        //TODO bemeneti mezők elmentése sharedpreferences-be
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putString(Constants.FORM_TYPE, typeText.getText().toString());
