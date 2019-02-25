@@ -220,7 +220,7 @@ public class RecorderService extends Service {
 
         FileOutputStream os;
         if (saveFile) {
-            File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/WavRecorder/");
+            File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/Zajszintmero/");
             dir.mkdirs();
 
             Constants.fileName = Constants.deviceUniqueID + "_" + year  + month + day + "_" + hour + minute + second;

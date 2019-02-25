@@ -17,6 +17,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -36,7 +37,10 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import com.opencsv.CSVWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -63,6 +67,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView overloadText;
     private int measLengthSec;
     private int overloadSumCount;
+    private String year;
+    private String month;
+    private String day;
+    private String hour;
+    private String minute;
+    private String second;
+    private String startTime;
 
 
     @NeedsPermission(Manifest.permission.READ_PHONE_STATE)
@@ -216,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     SharedPreferences.Editor prefEditor = prefs.edit();
                     prefEditor.putString(Constants.LA_HISTORY, LAHistory.toString());
                     prefEditor.putString(Constants.LC_HISTORY, LCHistory.toString());
+                    makeCSV();
 //                    int spl_rms = 0;
 //                    if (LAHistory.size() > 0){
 //                        float f = Float.valueOf(LAHistory.get(LAHistory.size()-1).replace(",","."));
@@ -228,7 +240,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //                    Log.d("spl_rms",String.valueOf(spl_rms));
                     prefEditor.putString(Constants.LAEQ_LAST,String.valueOf(Math.round(lAeq)));
                     prefEditor.apply();
-                    LAHistory.clear();
                     Intent formIntent = new Intent(context, FormActivity.class);
                     startActivity(formIntent);
                     break;
@@ -238,6 +249,55 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
     };
+
+    private void makeCSV() {
+        Thread fileWriterThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/Zajszintmero/");
+                dir.mkdirs();
+                File file = new File(dir,startTime+"_measurement.csv");
+                CSVWriter writer = null;
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                String rmsTime = prefs.getString("rms_time", "sec");
+                int incValue = 1000;
+                if (rmsTime.equals("sec")) {
+                    incValue = 1000;
+                } else if (rmsTime.equals("milli")) {
+                    incValue = 100;
+                }
+                try {
+                    writer = new CSVWriter(new FileWriter(file));
+                    List<String[]> data = new ArrayList<>();
+                    Time time = new Time(0);
+                    data.add(new String[] {"Time", "LAeq", "LCmax"});
+                    for (int i = 0; i < LAHistory.size(); i++){
+                        data.add(new String[] {time.getTimeString(), LAHistory.get(i), LCHistory.get(i)});
+                        time.increment(incValue);
+                    }
+                    writer.writeAll(data);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        writer.close();
+                        LAHistory.clear();
+                        LCHistory.clear();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+
+
+
+
+
+            }
+        });
+        fileWriterThread.start();
+
+    }
 
     private void overloadCategory() {
         if (overloadSumCount > 0){
@@ -404,6 +464,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     startService(startIntent);
                     overloadSumCount = 0;
                     resetUI();
+                    saveStartTime();
 
                 } else {
                     Toast.makeText(this, R.string.rec_started, Toast.LENGTH_LONG).show();
@@ -423,6 +484,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    private void saveStartTime() {
+        java.util.Calendar calendar = java.util.Calendar.getInstance();
+        year = String.valueOf(calendar.get(java.util.Calendar.YEAR));
+        month = String.valueOf(calendar.get(java.util.Calendar.MONTH) + 1);
+        day = String.valueOf(calendar.get(java.util.Calendar.DAY_OF_MONTH));
+        hour = String.valueOf(calendar.get(java.util.Calendar.HOUR_OF_DAY));
+        minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
+        second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
+        startTime = String.valueOf(android.text.format.DateFormat.format("yyyyMMdd_kkmmss", new java.util.Date()));
     }
 
     private void resetUI() {

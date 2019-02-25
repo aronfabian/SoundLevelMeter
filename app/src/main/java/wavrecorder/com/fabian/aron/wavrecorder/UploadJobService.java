@@ -3,6 +3,7 @@ package wavrecorder.com.fabian.aron.wavrecorder;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -10,9 +11,12 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.error.VolleyError;
+import com.android.volley.request.SimpleMultiPartRequest;
 import com.android.volley.request.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +72,44 @@ public class UploadJobService extends JobService {
             }
         };
         queue.add(postRequest);
+        sendToHIT();
         return false;
+    }
+
+    private void sendToHIT() {
+        File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/Zajszintmero/");
+        final File[] files  = dir.listFiles(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return name.matches("^.*\\.csv$");
+            }
+        });
+        String url = "http://last.hit.bme.hu/ovdafuled/ovd_a_fuled_measurement_upload.php";
+        for (final File file: files) {
+            SimpleMultiPartRequest smr = new SimpleMultiPartRequest(Request.Method.POST, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.d("Response", response);
+                            //file.delete();
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d("Error Response", error.getMessage());
+                }
+            }
+            );
+            smr.addStringParam("USER","123");
+            smr.addFile("logFile", file.getAbsolutePath());
+            File infoFile = new File(dir, "NewTextFile.txt");
+            smr.addFile("infoFile",infoFile.getAbsolutePath());
+            Log.d("MULTIPART: ",smr.toString());
+            RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+            mRequestQueue.add(smr);
+        }
+
+
     }
 
     @Override
