@@ -164,9 +164,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    List<String> LAHistory = new ArrayList<>();
-    List<String> LCHistory = new ArrayList<>();
-    double lAeq = 0;
+    List<String> LAeqHistory = new ArrayList<>();
     private final BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -174,8 +172,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case Constants.ACTION.DBA_DBC_BROADCAST_ACTION:
                     double dBA = intent.getDoubleExtra("dBA", 0);
                     double dBC = intent.getDoubleExtra("dBC_max", 0);
-                    LAHistory.add(String.format("%.1f",dBA));
-                    LCHistory.add(String.format("%.1f",dBC));
                     //dBCText.setText((int) dBC + "dBCmax");
                     dBCText.setText(String.format("%.1f dBCmax",dBC));
 
@@ -189,16 +185,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     ObjectAnimator.ofInt(progressBar, "progress", (int) dBA).start();
                     //dBAText.setText(String.valueOf((int) dBA) + "dBA");
                     dBAText.setText(String.format("%.1f dBA",dBA));
-
                     Log.d("MAIN", String.valueOf(dBA));
                     break;
                 case Constants.ACTION.LAEQ_BROADCAST_ACTION:
                     measLengthSec = intent.getIntExtra("measLength",0);
-                    lAeq = intent.getDoubleExtra("LAeq", 0);
+                    double lAeq = intent.getDoubleExtra("LAeq", 0);
                     if(measLengthSec > 60){
                         lAeqText.setText(String.format("LAeq: %.1fdB",lAeq));
                     }
-                    //LAHistory.add(String.format("%.1f",lAeq));
+                    LAeqHistory.add(String.format("%.1f",lAeq));
                     setRecommendationTexts(lAeq);
                     int min = measLengthSec / 60;
                     int sec = measLengthSec - (min*60);
@@ -217,21 +212,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case Constants.ACTION.RECORDERSTOPPED_ACTION:
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
                     SharedPreferences.Editor prefEditor = prefs.edit();
-                    prefEditor.putString(Constants.LA_HISTORY, LAHistory.toString());
-                    prefEditor.putString(Constants.LC_HISTORY, LCHistory.toString());
-//                    int spl_rms = 0;
-//                    if (LAHistory.size() > 0){
-//                        float f = Float.valueOf(LAHistory.get(LAHistory.size()-1).replace(",","."));
-//                        if (Float.isNaN(f) || Float.isInfinite(f)){
-//                            spl_rms = 0;
-//                        } else {
-//                            spl_rms = Math.round(f);
-//                        }
-//                    }
-//                    Log.d("spl_rms",String.valueOf(spl_rms));
-                    prefEditor.putString(Constants.LAEQ_LAST,String.valueOf(Math.round(lAeq)));
+                    prefEditor.putString(Constants.LAEQ_HISTORY,LAeqHistory.toString());
+                    int spl_rms = 0;
+                    if (LAeqHistory.size() > 0){
+                        float f = Float.valueOf(LAeqHistory.get(LAeqHistory.size()-1).replace(",","."));
+                        if (Float.isNaN(f) || Float.isInfinite(f)){
+                            spl_rms = 0;
+                        } else {
+                            spl_rms = Math.round(f);
+                        }
+                    }
+                    Log.d("spl_rms",String.valueOf(spl_rms));
+                    prefEditor.putString(Constants.LAEQ_LAST,String.valueOf(spl_rms));
                     prefEditor.apply();
-                    LAHistory.clear();
+                    LAeqHistory.clear();
                     Intent formIntent = new Intent(context, FormActivity.class);
                     startActivity(formIntent);
                     break;
