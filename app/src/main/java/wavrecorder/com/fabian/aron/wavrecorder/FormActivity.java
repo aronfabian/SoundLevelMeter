@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -17,6 +18,14 @@ import android.widget.RadioGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.opencsv.CSVWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener, View.OnClickListener {
 
@@ -116,13 +125,7 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
             case R.id.button_formsend:
                 if (checkInputs()) {
                     saveInputs();
-                    JobScheduler jobScheduler =
-                            (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-                    jobScheduler.schedule(new JobInfo.Builder(4,
-                            new ComponentName(this, UploadJobService.class))
-                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-                            .setRequiresCharging(false)
-                            .build());
+
                 }
                 findViewById(R.id.button_formsend).setEnabled(false);
                 break;
@@ -171,6 +174,60 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
         prefEditor.putString(Constants.FORM_COMMENT, commentText.getText().toString());
 
         prefEditor.apply();
+        saveToFile();
+    }
+
+    private void saveToFile() {
+        Thread fileWriterThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                String startTime = prefs.getString(Constants.START_TIME, "0");
+                File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/Zajszintmero/");
+                dir.mkdirs();
+                File file = new File(dir,startTime+"_info.csv");
+                CSVWriter writer = null;
+                try {
+                    writer = new CSVWriter(new FileWriter(file));
+                    List<String[]> data = new ArrayList<>();
+                    data.add(new String[] {"type", prefs.getString(Constants.FORM_TYPE, "")});
+                    data.add(new String[] {"location", prefs.getString(Constants.FORM_LOCATION, "")});
+                    data.add(new String[] {"time", prefs.getString(Constants.FORM_TIME, "")});
+                    data.add(new String[] {"spl_rms", prefs.getString(Constants.LAEQ_LAST, "")});
+                    data.add(new String[] {"distance", prefs.getString(Constants.FORM_DISTANCE, "")});
+                    data.add(new String[] {"phone", Constants.deviceUniqueID});
+                    data.add(new String[] {"application", getString(R.string.app_name)});
+                    data.add(new String[] {"loudness", prefs.getString(Constants.FORM_LOUDNESS, "")});
+                    data.add(new String[] {"comment", prefs.getString(Constants.FORM_COMMENT, "")});
+                    data.add(new String[] {"calibrated", (Constants.calibrationType.ordinal() > 0) ? "1" : "0"});
+                    data.add(new String[] {"target_audience", prefs.getString(Constants.FORM_TARGETAUD, "0")});
+                    data.add(new String[] {"event_duration", prefs.getString(Constants.FORM_EVENTLENGTH, "0")});
+                    data.add(new String[] {"reinforcement_type", prefs.getString(Constants.FORM_SOUNDSYS, "0")});
+                    writer.writeAll(data);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        writer.close();
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                scheduleUpload();
+            }
+        });
+        fileWriterThread.start();
+    }
+
+    private void scheduleUpload() {
+        JobScheduler jobScheduler =
+                (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        jobScheduler.schedule(new JobInfo.Builder(4,
+                new ComponentName(getBaseContext(), UploadJobService.class))
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
+                .setRequiresCharging(false)
+                .build());
     }
 
     private boolean checkInputs() {
