@@ -214,8 +214,10 @@ public class RecorderService extends Service {
         String hour = String.valueOf(calendar.get(java.util.Calendar.HOUR_OF_DAY));
         String minute = String.valueOf(calendar.get(java.util.Calendar.MINUTE));
         String second = String.valueOf(calendar.get(java.util.Calendar.SECOND));
+        String startTime = String.valueOf(android.text.format.DateFormat.format("yyyyMMdd_kkmmss", new java.util.Date()));
         SharedPreferences.Editor prefEditor = prefs.edit();
         prefEditor.putString(Constants.FORM_TIME, year+"-"+month+"-"+day+"T"+hour+":"+minute+":"+second);
+        prefEditor.putString(Constants.START_TIME, startTime);
         prefEditor.apply();
 
         FileOutputStream os;

@@ -78,20 +78,23 @@ public class UploadJobService extends JobService {
 
     private void sendToHIT() {
         File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/Zajszintmero/");
-        final File[] files  = dir.listFiles(new FilenameFilter() {
+        final File[] logFiles  = dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return name.matches("^.*\\.csv$");
+                return name.matches("^.*measurement\\.csv$");
             }
         });
+
         String url = "http://last.hit.bme.hu/ovdafuled/ovd_a_fuled_measurement_upload.php";
-        for (final File file: files) {
+        for (final File file: logFiles) {
+            final File infoFile  = new File(dir,file.getName().substring(0,16) + "info.csv");
             SimpleMultiPartRequest smr = new SimpleMultiPartRequest(Request.Method.POST, url,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
                             Log.d("Response", response);
-                            //file.delete();
+                            file.delete();
+                            infoFile.delete();
                         }
                     }, new Response.ErrorListener() {
                 @Override
@@ -100,11 +103,9 @@ public class UploadJobService extends JobService {
                 }
             }
             );
-            smr.addStringParam("USER","123");
+//            smr.addStringParam("USER","123");
             smr.addFile("logFile", file.getAbsolutePath());
-            File infoFile = new File(dir, "NewTextFile.txt");
             smr.addFile("infoFile",infoFile.getAbsolutePath());
-            Log.d("MULTIPART: ",smr.toString());
             RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
             mRequestQueue.add(smr);
         }

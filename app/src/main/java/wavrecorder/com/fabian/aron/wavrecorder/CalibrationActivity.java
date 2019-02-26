@@ -210,7 +210,7 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
             }
         }
         );
-        smr.addStringParam("USER","123");
+        //smr.addStringParam("USER","123");
 
         File dir = new File(Environment.getExternalStorageDirectory().getPath() + "/Zajszintmero/");
         //File wavFile  = lastFileModified(dir.getAbsolutePath());
