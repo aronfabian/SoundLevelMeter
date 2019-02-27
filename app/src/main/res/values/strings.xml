@@ -61,6 +61,7 @@
     <string name="no_calib_data">No calibration data</string>
     <string name="calib_data_downloaded">Calibration data has downloaded</string>
     <string name="notification_title">Recording...!</string>
+    <string name="form_sent">Data sent</string>
 
 
 

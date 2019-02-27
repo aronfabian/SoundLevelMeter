@@ -104,10 +104,15 @@ public class UploadJobService extends JobService {
             }
             );
 //            smr.addStringParam("USER","123");
-            smr.addFile("logFile", file.getAbsolutePath());
-            smr.addFile("infoFile",infoFile.getAbsolutePath());
-            RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
-            mRequestQueue.add(smr);
+            if (infoFile.exists()){
+                smr.addFile("logFile", file.getAbsolutePath());
+                smr.addFile("infoFile",infoFile.getAbsolutePath());
+                RequestQueue mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+                mRequestQueue.add(smr);
+            } else {
+                file.delete();
+            }
+
         }
 
 
