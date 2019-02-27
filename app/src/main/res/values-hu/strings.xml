@@ -62,7 +62,7 @@
     <string name="no_calib_data">Nem található kalibrációs adat</string>
     <string name="calib_data_downloaded">Kalibrációs adat letöltve</string>
     <string name="notification_title">Felvétel...!</string>
-
+    <string name="form_sent">Adatok továbbítva!</string>
 
 
 

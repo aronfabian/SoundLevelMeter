@@ -5,8 +5,8 @@ import android.app.job.JobInfo;
 import android.app.job.JobScheduler;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -175,6 +175,7 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
 
         prefEditor.apply();
         saveToFile();
+        Toast.makeText(getBaseContext(), R.string.form_sent, Toast.LENGTH_LONG).show();
     }
 
     private void saveToFile() {
@@ -215,6 +216,14 @@ public class FormActivity extends AppCompatActivity implements SeekBar.OnSeekBar
                     }
                 }
                 scheduleUpload();
+
+                try {
+                    Thread.sleep(2*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
             }
         });
         fileWriterThread.start();
