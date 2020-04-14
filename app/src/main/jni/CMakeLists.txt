@@ -23,5 +23,5 @@ target_link_libraries(
     log
     android
     OpenSLES
-    C:/Users/arons/SuperpoweredSDK/Superpowered/libSuperpoweredAndroid${ANDROID_ABI}.a
+		${PATH_TO_SUPERPOWERED}/libSuperpoweredAndroid${ANDROID_ABI}.a
 )

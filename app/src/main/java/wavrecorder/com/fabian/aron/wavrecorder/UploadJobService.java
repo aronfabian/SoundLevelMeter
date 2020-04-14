@@ -28,7 +28,7 @@ public class UploadJobService extends JobService {
     public boolean onStartJob(JobParameters params) {
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://ovdafuled.hu/fogadas.php";
+        String url = "https://www.ovdafuled.hu/fogadas.php";
         StringRequest postRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -85,7 +85,7 @@ public class UploadJobService extends JobService {
             }
         });
 
-        String url = "http://last.hit.bme.hu/ovdafuled/ovd_a_fuled_measurement_upload.php";
+        String url = "https://last.hit.bme.hu/ovdafuled/ovd_a_fuled_measurement_upload.php";
         for (final File file: logFiles) {
             final File infoFile  = new File(dir,file.getName().substring(0,16) + "info.csv");
             SimpleMultiPartRequest smr = new SimpleMultiPartRequest(Request.Method.POST, url,

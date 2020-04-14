@@ -116,7 +116,7 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
     }
     JSONObject bestMatchPhone = null;
     private void downloadCalibrationFile() {
-        String url = "http://last.hit.bme.hu/ovdafuled/PhoneDatabase.json";
+        String url = "https://last.hit.bme.hu/ovdafuled/PhoneDatabase.json";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET,url,null, new Response.Listener<JSONObject>(){
             @Override
             public void onResponse(JSONObject response) {
@@ -193,7 +193,7 @@ public class CalibrationActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void sendWavFile() {
-        String url = "http://last.hit.bme.hu/ovdafuled/ovd_a_fuled_calibration_upload.php";
+        String url = "https://last.hit.bme.hu/ovdafuled/ovd_a_fuled_calibration_upload.php";
         SimpleMultiPartRequest smr = new SimpleMultiPartRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override

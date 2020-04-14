@@ -1,13 +1,15 @@
 apply plugin: 'com.android.application'
 
-def superpowered_sdk_path = 'C:/Users/arons/SuperpoweredSDK/Superpowered'
+//def superpowered_sdk_path = 'C:/Users/arons/SuperpoweredSDK/Superpowered'
+def superpowered_sdk_path = '/Users/ferko/SuperpoweredSDK/Superpowered'
 
 android { // main settings for your application
     compileSdkVersion = 26
     buildToolsVersion = '27.0.3'
     defaultConfig {
         applicationId "com.fabian.aron.wavrecorder"
-        minSdkVersion 24 // more than 95% of all active Android devices
+//        minSdkVersion 24 // more than 95% of all active Android devices - Android 7.0
+        minSdkVersion 22 // more than 95% of all active Android devices - Android 5.1
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -39,6 +41,7 @@ android { // main settings for your application
     buildToolsVersion '28.0.3'
     productFlavors {
     }
+    ndkVersion = '20.0.5594570'
 }
 
 dependencies {
